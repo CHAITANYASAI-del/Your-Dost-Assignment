@@ -1,4 +1,4 @@
-# YourDOST · Product UI/UX Designer assignment
+# YourDOST · Sr Product Designer assignment
 
 Case study, working prototype and design rationale for the YourDOST assignment.
 

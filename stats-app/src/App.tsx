@@ -16,7 +16,7 @@ type Visit = {
   src: string; med: string; camp: string; cont: string
   vid: string; sid: string; returning: boolean; vw: string
   tracked: boolean; depth: number | null; secs: number | null; sec: number | null
-  d: number[]; b: number[]; c: string[]
+  d: number[]; b: number[]; c: string[]; t: Record<string, number>
 }
 type Manifest = {
   sections: { id: string; label: string }[]
@@ -34,6 +34,8 @@ const PROTO = ['ctaproto', 'openp1', 'openp2', 'usep1', 'usep2']
 const flag = (cc: string) => /^[A-Z]{2}$/.test(cc) ? String.fromCodePoint(...[...cc].map((c) => 127397 + c.charCodeAt(0))) : '🏳️'
 const ist = (ms: number, o: Intl.DateTimeFormatOptions) => new Date(ms).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', ...o })
 const fmtSecs = (s: number | null) => s == null ? '–' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`
+const SCOPE: Record<string, string> = { pg: 'Page', p1: 'Accounts Today prototype', p2: 'your Journey prototype' }
+const tapName = (k: string) => { const t = k.slice(k.indexOf('_') + 1).replace(/_/g, ' ').trim(); return t ? t[0].toUpperCase() + t.slice(1) : k }
 const pct = (a: number, b: number) => b ? Math.round(a / b * 100) : 0
 
 function social(v: Visit) {
@@ -142,6 +144,7 @@ export default function App() {
   const [range, setRange] = useState('30')
   const [gran, setGran] = useState('day')
   const [bsec, setBsec] = useState('all')
+  const [tscope, setTscope] = useState('all')
   const [sel, setSel] = useState<string | null>(null)
   const [spin, setSpin] = useState(false)
 
@@ -210,10 +213,13 @@ export default function App() {
       ['Studied · 3 min+', secsList.filter((x) => x >= 180).length],
     ]
     const milestones: [string, number][] = [25, 50, 75, 90, 100].map((m) => [`${m}% of the page`, tr.filter((v) => (v.depth || 0) >= m).length])
+    const tapAgg = new Map<string, { n: number; readers: number }>()
+    for (const v of tr) for (const [k, n] of Object.entries(v.t || {})) { const a = tapAgg.get(k) || { n: 0, readers: 0 }; a.n += n; a.readers++; tapAgg.set(k, a) }
+    const taps = [...tapAgg.entries()].map(([k, a]) => ({ id: k, scope: k.slice(0, k.indexOf('_')), where: SCOPE[k.slice(0, k.indexOf('_'))] || 'Page', label: tapName(k), ...a })).sort((a, b) => b.n - a.n)
     const hours = tally(cur, (v) => ist(v.at, { hour: 'numeric', hour12: true }).toUpperCase())
 
     return {
-      days, cur, g, strip, tr, S, sections, blocks, clicks, buckets, milestones, hours,
+      days, cur, g, strip, tr, S, sections, blocks, clicks, buckets, milestones, hours, taps,
       m: {
         total: cur.length, totalD: delta(cur.length, prev?.length ?? null),
         uniq: uniq(cur), uniqD: delta(uniq(cur), prev ? uniq(prev) : null),
@@ -222,6 +228,7 @@ export default function App() {
         avg: Math.round(avg(secsList)),
         contact: tr.filter((v) => clickedAny(v, CONTACT)).length,
         proto: tr.filter((v) => clickedAny(v, PROTO)).length,
+        tapsTotal: sum(taps.map((t) => t.n)),
       },
       funnel: S.map((s, i) => ({ id: `s${i}`, label: s.label, color: FUNNEL[i % FUNNEL.length], value: i === 0 ? tr.length : tr.filter((v) => (v.sec || 0) >= i).length })),
       countries: Object.fromEntries(tally(cur, (v) => v.country === '-' ? null : v.country)),
@@ -265,6 +272,17 @@ export default function App() {
     { key: 'heat', header: 'Attention', width: '140px', cell: (r) => <Heat value={r.avg} max={bmax} /> },
   ]
 
+  const tapRows = view.taps.filter((t) => tscope === 'all' || t.scope === tscope)
+  type TRow = typeof tapRows[number]
+  const tmax = Math.max(1, ...view.taps.map((t) => t.n))
+  const tcols: TableColumn<TRow>[] = [
+    { key: 'where', header: 'Where', sortable: true, width: '230px' },
+    { key: 'label', header: 'Tapped', sortable: true, width: '260px' },
+    { key: 'n', header: 'Taps', sortable: true, align: 'right', width: '90px' },
+    { key: 'readers', header: 'Readers', sortable: true, align: 'right', width: '130px', cell: (r) => `${r.readers} · ${pct(r.readers, view.tr.length)}%` },
+    { key: 'heat', header: 'Share', width: '160px', cell: (r) => <Heat value={r.n} max={tmax} /> },
+  ]
+
   const chosen = sel ? cur.find((v, i) => `${v.at}-${i}` === sel) : null
   const maxSecDwell = chosen ? Math.max(1, ...chosen.d) : 1
 
@@ -299,7 +317,7 @@ export default function App() {
         <Stat label="Used a prototype" value={m.proto} context={`${pct(m.proto, view.tr.length)}% of tracked readers`} />
         <Stat label="Clicked a contact link" value={m.contact} context={`${pct(m.contact, view.tr.length)}% · email, portfolio, LinkedIn, GitHub`} />
         <Stat label="Tracked readers" value={view.tr.length} context={`${pct(view.tr.length, m.total)}% of visits sent read data`} />
-        <Stat label="Returning visitors" value={m.ret} context={`${pct(m.ret, m.total)}% of visits`} />
+        <Stat label="Button & link taps" value={m.tapsTotal} context={view.tr.length ? `${(m.tapsTotal / view.tr.length).toFixed(1)} per tracked reader` : 'No tracked readers yet'} />
       </div>
     </Panel>
 
@@ -351,6 +369,18 @@ export default function App() {
         <BarList pairs={view.clicks.filter((c) => c.n > 0).sort((a, b) => b.n - a.n).map((c) => [c.label, c.n] as [string, number])} limit={10} empty="No clicks recorded yet" />
       </Panel>
     </div>
+
+    <Panel title="Every button & link tapped" className="mt-4" right={
+      <Tabs value={tscope} onValueChange={setTscope} variant="segment">
+        <TabsList><TabsTrigger value="all">All</TabsTrigger><TabsTrigger value="pg">Page</TabsTrigger><TabsTrigger value="p1">Accounts prototype</TabsTrigger><TabsTrigger value="p2">Journey prototype</TabsTrigger></TabsList>
+      </Tabs>}>
+      <p className="mb-3 text-xs text-muted-foreground">Every tap on a button, link or tappable element, on the case study and inside both live prototypes. Taps are the total number; readers are how many different people tapped it.</p>
+      <div className="overflow-x-auto">
+        <div className="min-w-[760px]">
+          <Table data={tapRows} columns={tcols} getRowId={(r) => r.id} defaultSort={{ key: 'n', direction: 'desc' }} rowHeight={44} height={Math.min(480, 52 + Math.max(1, tapRows.length) * 44)} emptyState="No taps recorded yet" />
+        </div>
+      </div>
+    </Panel>
 
     <Panel title="Row-by-row attention" className="mt-4" right={
       <Select value={bsec} onValueChange={setBsec} className="w-56">
@@ -438,7 +468,10 @@ export default function App() {
             <div className="flex justify-between"><dt className="text-muted-foreground">Device</dt><dd>{chosen.device} · {chosen.os} · {chosen.browser}</dd></div>
             <div className="flex justify-between"><dt className="text-muted-foreground">Came from</dt><dd>{social(chosen)}</dd></div>
           </dl>
-          <h3 className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Clicked</h3>
+          <h3 className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tapped</h3>
+          <ul className="mb-4 space-y-1.5 text-sm">{Object.entries(chosen.t || {}).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, n]) => <li key={k} className="flex justify-between gap-3"><span className="truncate"><span className="text-muted-foreground">{SCOPE[k.slice(0, k.indexOf('_'))] || 'Page'} · </span>{tapName(k)}</span><span className="tabular-nums text-muted-foreground">×{n}</span></li>)}
+            {!Object.keys(chosen.t || {}).length && <li className="text-muted-foreground">No taps</li>}</ul>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Key links</h3>
           <div className="flex flex-wrap gap-1.5">{chosen.c.length ? chosen.c.map((c) => <AnimatedBadge key={c} size="sm" status="success" showIcon={false}>{evLabel(c)}</AnimatedBadge>) : <span className="text-sm text-muted-foreground">No links clicked</span>}</div>
         </div>
       </div> : <Empty>This visit did not send reading data (closed before scrolling, or tracking was blocked).</Empty>}

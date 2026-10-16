@@ -5,12 +5,13 @@ import { put } from '@vercel/blob';
 //  - visit: one per browser session. Vercel's IP-derived country/region/city, device, OS, browser,
 //    referrer host, UTM tags, viewport size, whether the visitor has been here before, anonymous ids.
 //  - read: cumulative reading state, sent when the tab is hidden/closed and every ~45s while active.
-//    depth %, engaged seconds, furthest section, seconds per section, seconds per block, clicked links.
+//    depth %, engaged seconds, furthest section, seconds per section, seconds per block, clicked links, tap counts.
 const clean = (s) => String(s || '').replace(/[^\p{L}\p{N} .-]/gu, '').trim().slice(0, 40) || '-';
 const dec = (v) => { try { return decodeURIComponent(v || ''); } catch { return v || ''; } };
 const idOk = (s) => (/^[a-z0-9]{4,16}$/.test(String(s || '')) ? s : '-');
 const int = (v, max) => Math.max(0, Math.min(max, Math.round(Number(v) || 0)));
 const list36 = (v, max) => (/^[a-z0-9.]{1,}$/.test(String(v || '')) && String(v).length <= max ? String(v) : '0');
+const tapList = (v, max) => (/^[a-z0-9_.]{1,}$/.test(String(v || '')) && String(v).length <= max ? String(v) : '0');
 const rand = () => Math.random().toString(36).slice(2, 10);
 
 function browserOf(ua) {
@@ -42,7 +43,7 @@ export default async function handler(req, res) {
       const sid = idOk(body.sid);
       if (sid === '-') return res.status(204).end();
       const name = [sid, int(body.depth, 100), int(body.secs, 14400), int(body.sec, 9),
-        list36(body.d, 80), list36(body.b, 400), list36(body.c, 200), rand()].join('~');
+        list36(body.d, 60), list36(body.b, 260), list36(body.c, 120), tapList(body.t, 320), rand()].join('~');
       await put(`reads/${name}.json`, '{}', { access: 'private', contentType: 'application/json', addRandomSuffix: false });
       return res.status(204).end();
     }

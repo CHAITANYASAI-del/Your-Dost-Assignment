@@ -37,12 +37,13 @@ export default async function handler(req, res) {
   // Reads are cumulative snapshots. Keep the fullest one per session, and union every link clicked.
   const reads = {};
   for (const b of readBlobs) {
-    const [sid, depth, secs, sec, d, bl, c] = parts(b, 'reads/');
-    const r = reads[sid] || (reads[sid] = { depth: 0, secs: -1, sec: 0, d: [], b: [], c: new Set() });
+    const [sid, depth, secs, sec, d, bl, c, t] = parts(b, 'reads/');
+    const r = reads[sid] || (reads[sid] = { depth: 0, secs: -1, sec: 0, d: [], b: [], c: new Set(), t: {} });
     r.depth = Math.max(r.depth, +depth || 0);
     r.sec = Math.max(r.sec, +sec || 0);
     if ((+secs || 0) > r.secs) { r.secs = +secs || 0; r.d = nums(d || '0'); r.b = nums(bl || '0'); }
     if (c && c !== '0') c.split('.').forEach((x) => r.c.add(x));
+    if (t && t !== '0') t.split('.').forEach((x) => { const i = x.lastIndexOf('__x'); if (i > 0) { const k = x.slice(0, i), n = parseInt(x.slice(i + 3), 10) || 0; r.t[k] = Math.max(r.t[k] || 0, n); } });
   }
 
   const visits = visitBlobs.map((b) => {
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
       at: new Date(b.uploadedAt).getTime(), country, region, regionName: REGIONS[country]?.[region] || region, city,
       device: cap(device), os, browser, ref, src, med, camp, cont, vid, sid, returning: ret === 'r', vw,
       tracked: !!r, depth: r ? r.depth : null, secs: r ? Math.max(0, r.secs) : null, sec: r ? r.sec : null,
-      d: r ? r.d : [], b: r ? r.b : [], c: r ? [...r.c] : [],
+      d: r ? r.d : [], b: r ? r.b : [], c: r ? [...r.c] : [], t: r ? r.t : {},
     };
   }).sort((a, b) => b.at - a.at);
 

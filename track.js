@@ -22,6 +22,8 @@
   var dwell = SECTIONS.map(function () { return 0; });     // seconds per section
   var bdwell = blocks.map(function () { return 0; });      // seconds per block
   var clicks = {};                                          // event code -> true
+  var taps = {};                                            // scoped tap label -> count (every button / link / tappable thing)
+  var tapN = 0;
   var maxD = 0, maxS = 0, active = 0, vis = !document.hidden, lastInput = Date.now(), dirty = false, lastSent = '';
   var inView = {};                                          // block index -> true while >=55% visible
 
@@ -90,12 +92,55 @@
     }, 0);
   });
 
+
+  /* every tap on anything tappable, on the page and inside both prototypes (same-origin iframes).
+     "Tappable" = a link/button/control, or anything the browser shows a pointer cursor on. */
+  function slug(t) { return String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 26); }
+  function tapLabel(el) {
+    var node = el, hops = 0, view = (el.ownerDocument && el.ownerDocument.defaultView) || window;
+    while (node && node.nodeType === 1 && hops < 6) {
+      var tag = node.tagName, cs = view.getComputedStyle(node);
+      if (/^(A|BUTTON|SUMMARY|SELECT|INPUT|LABEL)$/.test(tag) || node.getAttribute('role') === 'button' || node.getAttribute('role') === 'tab' || cs.cursor === 'pointer') {
+        var raw = node.getAttribute('aria-label') || node.getAttribute('title') || (node.innerText || node.textContent || '').trim().split('\n')[0] || node.getAttribute('data-ev') || (node.className && String(node.className.baseVal != null ? node.className.baseVal : node.className).split(' ')[0]) || tag;
+        return slug(raw) || slug(tag);
+      }
+      node = node.parentNode; hops++;
+    }
+    return null;
+  }
+  function onTap(scope) {
+    return function (e) {
+      lastInput = Date.now();
+      var l = e.target && e.target.nodeType === 1 ? tapLabel(e.target) : null;
+      if (!l) return;
+      var k = scope + '_' + l;
+      if (!(k in taps) && Object.keys(taps).length >= 40) return;
+      taps[k] = (taps[k] || 0) + 1; tapN++; dirty = true;
+      clearTimeout(onTap.t); onTap.t = setTimeout(function () { send(false); }, 5000);
+    };
+  }
+  document.addEventListener('click', onTap('pg'), true);
+  [].slice.call(document.querySelectorAll('iframe[data-fr]')).forEach(function (f) {
+    var scope = f.getAttribute('data-fr');
+    function hook() { try { f.contentDocument.addEventListener('click', onTap(scope), true); } catch (e) {} }
+    f.addEventListener('load', hook); try { if (f.contentDocument && f.contentDocument.readyState === 'complete') hook(); } catch (e) {}
+  });
+
   var b36 = function (n) { return Math.min(n, 46655).toString(36); };
   function trim(arr) { var n = arr.length; while (n > 0 && !arr[n - 1]) n--; return arr.slice(0, n).map(b36).join('.') || '0'; }
+  function tapString() {   /* most-tapped first, trimmed to fit the server's 320-char limit */
+    var out = [], len = 0;
+    Object.keys(taps).sort(function (a, b) { return taps[b] - taps[a]; }).forEach(function (k) {
+      var part = k + '__x' + taps[k];
+      if (len + part.length + 1 <= 310) { out.push(part); len += part.length + 1; }
+    });
+    return out.join('.') || '0';
+  }
   function send(beacon) {
     var body = {
       type: 'read', sid: sid, depth: maxD, secs: active, sec: maxS,
-      d: trim(dwell), b: trim(bdwell), c: Object.keys(clicks).join('.') || '0'
+      d: trim(dwell), b: trim(bdwell), c: Object.keys(clicks).join('.') || '0',
+      t: tapString()
     };
     var sig = JSON.stringify(body);
     if (sig === lastSent) return; lastSent = sig; dirty = false;
