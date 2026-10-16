@@ -101,7 +101,7 @@
     while (node && node.nodeType === 1 && hops < 6) {
       var tag = node.tagName, cs = view.getComputedStyle(node);
       if (/^(A|BUTTON|SUMMARY|SELECT|INPUT|LABEL)$/.test(tag) || node.getAttribute('role') === 'button' || node.getAttribute('role') === 'tab' || cs.cursor === 'pointer') {
-        var raw = node.getAttribute('aria-label') || node.getAttribute('title') || (node.innerText || node.textContent || '').trim().split('\n')[0] || node.getAttribute('data-ev') || (node.className && String(node.className.baseVal != null ? node.className.baseVal : node.className).split(' ')[0]) || tag;
+        var raw = node.getAttribute('data-ev') || node.getAttribute('aria-label') || node.getAttribute('title') || (node.innerText || node.textContent || '').trim().split('\n')[0] || (node.className && String(node.className.baseVal != null ? node.className.baseVal : node.className).split(' ')[0]) || tag;
         return slug(raw) || slug(tag);
       }
       node = node.parentNode; hops++;

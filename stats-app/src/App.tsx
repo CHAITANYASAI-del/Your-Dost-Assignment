@@ -213,9 +213,10 @@ export default function App() {
       ['Studied · 3 min+', secsList.filter((x) => x >= 180).length],
     ]
     const milestones: [string, number][] = [25, 50, 75, 90, 100].map((m) => [`${m}% of the page`, tr.filter((v) => (v.depth || 0) >= m).length])
+    const evMap: Record<string, string> = Object.fromEntries(man.events.map((e) => [e.code, e.label]))
     const tapAgg = new Map<string, { n: number; readers: number }>()
     for (const v of tr) for (const [k, n] of Object.entries(v.t || {})) { const a = tapAgg.get(k) || { n: 0, readers: 0 }; a.n += n; a.readers++; tapAgg.set(k, a) }
-    const taps = [...tapAgg.entries()].map(([k, a]) => ({ id: k, scope: k.slice(0, k.indexOf('_')), where: SCOPE[k.slice(0, k.indexOf('_'))] || 'Page', label: tapName(k), ...a })).sort((a, b) => b.n - a.n)
+    const taps = [...tapAgg.entries()].map(([k, a]) => ({ id: k, scope: k.slice(0, k.indexOf('_')), where: SCOPE[k.slice(0, k.indexOf('_'))] || 'Page', label: evMap[k.slice(k.indexOf('_') + 1)] || tapName(k), ...a })).sort((a, b) => b.n - a.n)
     const hours = tally(cur, (v) => ist(v.at, { hour: 'numeric', hour12: true }).toUpperCase())
 
     return {
@@ -469,7 +470,7 @@ export default function App() {
             <div className="flex justify-between"><dt className="text-muted-foreground">Came from</dt><dd>{social(chosen)}</dd></div>
           </dl>
           <h3 className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tapped</h3>
-          <ul className="mb-4 space-y-1.5 text-sm">{Object.entries(chosen.t || {}).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, n]) => <li key={k} className="flex justify-between gap-3"><span className="truncate"><span className="text-muted-foreground">{SCOPE[k.slice(0, k.indexOf('_'))] || 'Page'} · </span>{tapName(k)}</span><span className="tabular-nums text-muted-foreground">×{n}</span></li>)}
+          <ul className="mb-4 space-y-1.5 text-sm">{Object.entries(chosen.t || {}).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, n]) => <li key={k} className="flex justify-between gap-3"><span className="truncate"><span className="text-muted-foreground">{SCOPE[k.slice(0, k.indexOf('_'))] || 'Page'} · </span>{evLabel(k.slice(k.indexOf('_') + 1)) !== k.slice(k.indexOf('_') + 1) ? evLabel(k.slice(k.indexOf('_') + 1)) : tapName(k)}</span><span className="tabular-nums text-muted-foreground">×{n}</span></li>)}
             {!Object.keys(chosen.t || {}).length && <li className="text-muted-foreground">No taps</li>}</ul>
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Key links</h3>
           <div className="flex flex-wrap gap-1.5">{chosen.c.length ? chosen.c.map((c) => <AnimatedBadge key={c} size="sm" status="success" showIcon={false}>{evLabel(c)}</AnimatedBadge>) : <span className="text-sm text-muted-foreground">No links clicked</span>}</div>
