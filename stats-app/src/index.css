@@ -62,3 +62,18 @@
 
 /* Map tooltip from jsvectormap, matched to beUI's tooltip surface. */
 .jvm-tooltip { background: var(--foreground); color: var(--background); font-family: inherit; font-size: 12px; border-radius: 8px; padding: 4px 8px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); }
+
+/* ---- lock screen (macOS style) ---- */
+@keyframes yd-shake { 0%,100% { transform: translateX(0) } 15% { transform: translateX(-10px) } 35% { transform: translateX(9px) } 55% { transform: translateX(-6px) } 75% { transform: translateX(4px) } }
+@keyframes yd-ring { 0% { box-shadow: 0 0 0 0 rgb(255 255 255 / .65) } 100% { box-shadow: 0 0 0 16px rgb(255 255 255 / 0) } }
+@keyframes yd-pop { 0% { transform: scale(.6); opacity: 0 } 70% { transform: scale(1.08) } 100% { transform: scale(1); opacity: 1 } }
+@keyframes yd-scan { 0%,100% { transform: scale(1) } 50% { transform: scale(1.04) } }
+.yd-shake { animation: yd-shake .5s cubic-bezier(.36,.07,.19,.97) }
+.yd-ring { animation: yd-ring 1.1s ease-out infinite }
+.yd-pop { animation: yd-pop .35s cubic-bezier(.34,1.56,.64,1) both }
+.yd-scan { animation: yd-scan 1.4s ease-in-out infinite }
+.yd-lock { transition: opacity .55s ease, transform .55s ease; }
+.yd-lock .yd-veil { transition: opacity .55s ease, backdrop-filter .55s ease; }
+.yd-lock.yd-out { opacity: 0; transform: scale(1.04); }
+.yd-lock.yd-out .yd-veil { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .yd-shake, .yd-ring, .yd-scan, .yd-pop { animation: none } .yd-lock { transition: none } }

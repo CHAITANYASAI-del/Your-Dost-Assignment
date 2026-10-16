@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { Fingerprint, Lightbulb, Lock as LockIcon } from 'lucide-react'
+import { ArrowRight, Check, Fingerprint } from 'lucide-react'
 
 const b64u = (buf: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 const fromB64u = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))
 const enc = (s: string) => new TextEncoder().encode(s)
 const PK = 'yd-pk'
+const SKIP = 'yd-pk-skip'
 
 type Reply = { ok: boolean; status: number; error?: string; [k: string]: unknown }
 export async function post(action: string, body: Record<string, unknown> = {}): Promise<Reply> {
@@ -17,6 +18,7 @@ export async function touchIdSupported() {
   try { return !!window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() } catch { return false }
 }
 export const hasLocalPasskey = () => { try { return !!localStorage.getItem(PK) } catch { return false } }
+const skipped = () => { try { return !!localStorage.getItem(SKIP) } catch { return false } }
 
 /** Registers this device's Touch ID (or Windows Hello / Face ID). Needs an unlocked session. */
 export async function enableTouchId() {
@@ -37,7 +39,7 @@ export async function enableTouchId() {
   if (!pk) throw new Error('This browser cannot register Touch ID.')
   const v = await post('reg-verify', { id: cred.id, clientDataJSON: b64u(r.clientDataJSON), publicKey: b64u(pk) })
   if (!v.ok) throw new Error(v.error || 'Could not register Touch ID.')
-  localStorage.setItem(PK, cred.id)
+  localStorage.setItem(PK, cred.id); localStorage.removeItem(SKIP)
 }
 
 export async function unlockWithTouchId() {
@@ -55,65 +57,109 @@ export async function unlockWithTouchId() {
   if (!v.ok) throw new Error(v.error || 'Touch ID did not match.')
 }
 
+type Mode = 'idle' | 'touch' | 'checking' | 'success'
+
 export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
   const [pw, setPw] = useState('')
-  const [err, setErr] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [shake, setShake] = useState(false)
+  const [mode, setMode] = useState<Mode>('idle')
   const [hint, setHint] = useState(false)
-  const [info, setInfo] = useState('')
-  const [tid, setTid] = useState(false)
+  const [canTid, setCanTid] = useState(false)
+  const [now, setNow] = useState(() => new Date())
   const input = useRef<HTMLInputElement>(null)
+  const busy = mode === 'touch' || mode === 'checking' || mode === 'success'
 
+  useEffect(() => { const t = setInterval(() => setNow(new Date()), 15000); return () => clearInterval(t) }, [])
   useEffect(() => {
-    input.current?.focus()
-    // Always offer Touch ID where the browser has WebAuthn; if it is not set up yet the button explains how.
-    setTid(!!window.PublicKeyCredential)
+    let live = true
+    ;(async () => {
+      const ok = !!window.PublicKeyCredential && await touchIdSupported()
+      if (!live) return
+      setCanTid(ok)
+      if (ok && hasLocalPasskey()) tryTouch(true)   // a registered Mac asks for Touch ID straight away
+      else input.current?.focus()
+    })()
+    return () => { live = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function submit(e: FormEvent) {
-    e.preventDefault()
+  function unlocked() { setMode('success'); setTimeout(onUnlocked, 650) }
+  function wrong(text: string) { setMsg(text); setPw(''); setShake(true); setTimeout(() => setShake(false), 520); setMode('idle'); setTimeout(() => input.current?.focus(), 30) }
+
+  async function tryTouch(auto = false) {
+    setMode('touch'); setMsg('')
+    try { await unlockWithTouchId(); unlocked(); return } catch (e) {
+      setMode('idle')
+      const m = (e as Error).message
+      if (!auto && m !== 'Cancelled') setMsg(m)
+      input.current?.focus()
+    }
+  }
+  async function touchButton() {
+    if (busy) return
+    const st = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
+    if (hasLocalPasskey() || st.passkeys > 0) return tryTouch()
+    if (!pw.trim()) { setMsg('Enter your password once to set up Touch ID on this Mac.'); input.current?.focus(); return }
+    submit()
+  }
+  async function submit(e?: FormEvent) {
+    e?.preventDefault()
     if (!pw.trim() || busy) return
-    setBusy(true); setErr('')
+    setMode('checking'); setMsg('')
     const r = await post('login', { password: pw })
-    setBusy(false)
-    if (r.ok) onUnlocked(); else { setErr(r.error || 'That is not it.'); setPw(''); input.current?.focus() }
-  }
-  async function touch() {
-    setBusy(true); setErr(''); setInfo('')
-    try {
-      const st = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
-      if (hasLocalPasskey() || st.passkeys > 0) { await unlockWithTouchId(); onUnlocked(); return }
-      // First time on this device: the password proves it is you, and the same tap registers Touch ID.
-      if (!pw.trim()) { setInfo('Type your password once, then tap Touch ID again. This Mac will remember it after that.'); input.current?.focus(); return }
-      const r = await post('login', { password: pw })
-      if (!r.ok) { setErr(r.error || 'That is not it.'); setPw(''); input.current?.focus(); return }
-      try { await enableTouchId() } catch { /* unlocked anyway; the dashboard offers Enable Touch ID */ }
-      onUnlocked()
-    } catch (e) { setErr((e as Error).message === 'Cancelled' ? '' : (e as Error).message || 'Touch ID did not work.') }
-    finally { setBusy(false) }
+    if (!r.ok) return wrong(r.error === 'That is not it.' ? 'Incorrect password' : (r.error || 'Incorrect password'))
+    // first unlock on a Touch ID Mac: register it in the same moment (silently skipped if declined)
+    if (canTid && !hasLocalPasskey() && !skipped()) {
+      try { await enableTouchId() } catch (er) { if ((er as Error).message === 'Cancelled') { try { localStorage.setItem(SKIP, '1') } catch { /* ignore */ } } }
+    }
+    unlocked()
   }
 
-  return <div className="grid min-h-screen place-items-center px-4">
-    <form onSubmit={submit} className="w-full max-w-sm rounded-3xl border bg-card p-7 shadow-[0_20px_60px_-30px_rgb(0_0_0/0.25)]">
-      <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-brand-soft text-brand"><LockIcon className="size-5" aria-hidden="true" /></div>
-      <h1 className="mt-4 text-center text-xl font-semibold tracking-tight">Reader stats</h1>
-      <p className="mt-1 text-center text-sm text-muted-foreground">Private. Enter the password to continue.</p>
+  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: false })
+  const date = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })
+  const label = mode === 'touch' ? 'Touch the sensor…' : mode === 'checking' ? 'Checking…' : mode === 'success' ? 'Unlocked' : canTid ? 'Touch ID or Enter Password' : 'Enter Password'
 
-      <input ref={input} type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" autoComplete="current-password" aria-label="Password"
-        className={`mt-6 h-12 w-full rounded-xl border bg-background px-4 text-base outline-none transition focus:ring-2 focus:ring-brand/40 ${err ? 'border-red-400' : ''}`} />
-      {err && <p role="alert" className="mt-2 text-sm text-red-600">{err}</p>}
-      {info && <p role="status" className="mt-2 text-sm text-brand">{info}</p>}
+  return <div className={`yd-lock fixed inset-0 overflow-hidden text-white ${mode === 'success' ? 'yd-out' : ''}`} style={{ backgroundImage: "url('/assets/sky.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="yd-veil absolute inset-0 bg-[#0b2a55]/25 backdrop-blur-xl" />
+    <div className="relative z-10 flex h-full flex-col items-center px-6">
+      <div className="mt-[9vh] text-center drop-shadow-[0_2px_20px_rgba(11,42,85,.35)]">
+        <div className="text-lg font-medium text-white/85">{date}</div>
+        <div className="text-[84px] font-semibold leading-none tracking-tight sm:text-[104px]">{time}</div>
+      </div>
 
-      <button type="submit" disabled={busy || !pw.trim()} className="mt-3 h-12 w-full rounded-xl bg-brand text-sm font-semibold text-white transition active:scale-[.98] disabled:opacity-40">{busy ? 'Checking…' : 'Unlock'}</button>
+      <div className="mt-auto mb-[12vh] flex w-full max-w-[290px] flex-col items-center">
+        <div className={`yd-avatar relative ${mode === 'touch' ? 'yd-scan' : ''}`}>
+          <img src="/assets/avatar-hq.gif" alt="" className="size-24 rounded-full object-cover shadow-[0_10px_30px_rgba(11,42,85,.35)] ring-2 ring-white/70" />
+          {mode === 'success' && <span className="yd-pop absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-full bg-emerald-500 text-white ring-2 ring-white"><Check className="size-4" strokeWidth={3} aria-hidden="true" /></span>}
+        </div>
+        <div className="mt-3 text-xl font-semibold drop-shadow-[0_1px_8px_rgba(11,42,85,.4)]">Chaitanya Sai</div>
 
-      {tid && <button type="button" onClick={touch} disabled={busy} className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[.98] disabled:opacity-40">
-        <Fingerprint className="size-5" aria-hidden="true" />Unlock with Touch ID
-      </button>}
+        <form onSubmit={submit} className={`mt-4 w-full ${shake ? 'yd-shake' : ''}`}>
+          <div className="relative">
+            <input ref={input} type="password" value={pw} onChange={(e) => { setPw(e.target.value); if (msg) setMsg('') }} disabled={busy}
+              placeholder="Enter Password" autoComplete="current-password" aria-label="Password"
+              className="h-11 w-full rounded-full border border-white/40 bg-white/25 pl-5 pr-12 text-[15px] text-white placeholder-white/75 outline-none backdrop-blur-md transition focus:bg-white/35 focus:ring-2 focus:ring-white/60 disabled:opacity-70" />
+            <button type="submit" disabled={busy || !pw.trim()} aria-label="Unlock"
+              className={`absolute right-1.5 top-1.5 grid size-8 place-items-center rounded-full bg-white/40 text-white transition ${pw.trim() ? 'opacity-100 active:scale-90' : 'pointer-events-none opacity-0'}`}>
+              <ArrowRight className="size-4" strokeWidth={2.5} aria-hidden="true" />
+            </button>
+          </div>
+        </form>
 
-      <button type="button" onClick={() => setHint((h) => !h)} className="mx-auto mt-5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
-        <Lightbulb className="size-3.5" aria-hidden="true" />{hint ? 'Hide hint' : 'Need a hint?'}
-      </button>
-      {hint && <p className="mt-2 rounded-xl bg-muted px-3.5 py-3 text-center text-sm">Your most favourite persona, and what you’d love to call her.</p>}
-    </form>
+        <div role="status" aria-live="polite" className="mt-3 min-h-10 text-center text-[13px] font-medium text-white/90 drop-shadow-[0_1px_6px_rgba(11,42,85,.45)]">
+          {msg || label}
+        </div>
+
+        <div className="mt-1 flex items-center gap-5">
+          {canTid && <button type="button" onClick={touchButton} disabled={busy} aria-label="Unlock with Touch ID"
+            className={`grid size-11 place-items-center rounded-full border border-white/40 bg-white/20 backdrop-blur-md transition hover:bg-white/30 active:scale-90 disabled:opacity-60 ${mode === 'touch' ? 'yd-ring' : ''}`}>
+            <Fingerprint className="size-6" aria-hidden="true" />
+          </button>}
+          <button type="button" onClick={() => setHint((h) => !h)} className="text-[13px] font-medium text-white/85 underline-offset-4 hover:underline">{hint ? 'Hide hint' : 'Password hint'}</button>
+        </div>
+        {hint && <p className="yd-pop mt-3 rounded-2xl border border-white/30 bg-white/20 px-4 py-3 text-center text-sm backdrop-blur-md">Your most favourite persona, and what you’d love to call her.</p>}
+      </div>
+    </div>
   </div>
 }
