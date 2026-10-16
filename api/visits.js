@@ -1,7 +1,7 @@
 import { list } from '@vercel/blob';
+import { isAuthed } from './_auth.js';
 
-// Data endpoint for the private dashboard (/stats). Requires ?key=STATS_KEY.
-// Opening it without ?format=json redirects to the dashboard page.
+// Data endpoint for the private dashboard (/track). Requires the signed session cookie set by /api/auth.
 const REGIONS = {
   IN: { KA: 'Karnataka', MH: 'Maharashtra', TG: 'Telangana', TN: 'Tamil Nadu', DL: 'Delhi', AP: 'Andhra Pradesh', KL: 'Kerala', HR: 'Haryana', UP: 'Uttar Pradesh', GJ: 'Gujarat', WB: 'West Bengal', RJ: 'Rajasthan', PB: 'Punjab', OR: 'Odisha' },
   AE: { DU: 'Dubai', AZ: 'Abu Dhabi', SH: 'Sharjah', AJ: 'Ajman', RK: 'Ras Al Khaimah', FU: 'Fujairah', UQ: 'Umm Al Quwain' },
@@ -24,13 +24,8 @@ const parts = (b, prefix) => b.pathname.slice(prefix.length).replace(/\.json$/, 
 const nums = (s) => (s === '0' ? [] : s.split('.').map((x) => parseInt(x, 36) || 0));
 
 export default async function handler(req, res) {
-  const url = new URL(req.url, 'http://x');
-  const key = url.searchParams.get('key');
-  if (!process.env.STATS_KEY || key !== process.env.STATS_KEY) return res.status(404).send('Not found');
-  if (url.searchParams.get('format') !== 'json') {
-    res.setHeader('Location', `/stats/?key=${encodeURIComponent(key)}`);
-    return res.status(302).end();
-  }
+  res.setHeader('Cache-Control', 'no-store');
+  if (!isAuthed(req)) return res.status(401).json({ error: 'locked' });
 
   const [visitBlobs, readBlobs] = await Promise.all([listAll('visits/'), listAll('reads/')]);
 

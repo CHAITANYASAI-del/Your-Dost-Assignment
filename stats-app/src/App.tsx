@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import jsVectorMap from 'jsvectormap'
-import { RefreshCw } from 'lucide-react'
+import { Fingerprint, LogOut, RefreshCw } from 'lucide-react'
+import { Lock, enableTouchId, hasLocalPasskey, post, touchIdSupported } from '@/Lock'
 import { FunnelChart } from '@/components/charts/funnel-chart'
 import { StatusBar, StatusBarLegend, StatusBarPlot, StatusBarTooltip, type StatusBarDatum } from '@/components/charts/status-bar'
 import { Treemap, TreemapLegend, TreemapPlot, TreemapTooltip } from '@/components/charts/treemap'
@@ -137,26 +138,31 @@ function WorldMap({ values }: { values: Record<string, number> }) {
 
 /* ---------- page ---------- */
 export default function App() {
-  const key = useMemo(() => new URLSearchParams(location.search).get('key') || '', [])
   const [data, setData] = useState<{ now: number; visits: Visit[] } | null>(null)
   const [man, setMan] = useState<Manifest | null>(null)
-  const [state, setState] = useState<'loading' | 'ok' | 'denied'>('loading')
+  const [state, setState] = useState<'loading' | 'ok' | 'locked' | 'error'>('loading')
   const [range, setRange] = useState('30')
   const [gran, setGran] = useState('day')
   const [bsec, setBsec] = useState('all')
   const [tscope, setTscope] = useState('all')
   const [sel, setSel] = useState<string | null>(null)
   const [spin, setSpin] = useState(false)
+  const [canTid, setCanTid] = useState(false)
+  const [tidMsg, setTidMsg] = useState('')
+  useEffect(() => { touchIdSupported().then((ok) => setCanTid(ok && !hasLocalPasskey())) }, [])
+  async function addTouchId() { setTidMsg('') ; try { await enableTouchId(); setCanTid(false); setTidMsg('Touch ID is on for this device.') } catch (e) { setTidMsg((e as Error).message === 'Cancelled' ? '' : (e as Error).message) } }
+  async function lockNow() { await post('logout'); setData(null); setState('locked') }
 
   const load = useCallback(async () => {
     setSpin(true)
     try {
-      const r = await fetch(`/api/visits?format=json&key=${encodeURIComponent(key)}`, { cache: 'no-store' })
-      if (!r.ok) throw new Error('denied')
+      const r = await fetch('/api/visits?format=json', { cache: 'no-store' })
+      if (r.status === 401) { setData(null); setState('locked'); return }
+      if (!r.ok) throw new Error('error')
       setData(await r.json()); setState('ok')
-    } catch { setState('denied') } finally { setTimeout(() => setSpin(false), 400) }
-  }, [key])
-  useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t) }, [load])
+    } catch { setState('error') } finally { setTimeout(() => setSpin(false), 400) }
+  }, [])
+  useEffect(() => { load(); const t = setInterval(() => { if (document.visibilityState === 'visible') load() }, 60000); return () => clearInterval(t) }, [load])
   useEffect(() => { fetch('/track-manifest.json', { cache: 'no-store' }).then((r) => r.json()).then(setMan).catch(() => {}) }, [])
 
   const view = useMemo(() => {
@@ -237,7 +243,8 @@ export default function App() {
     }
   }, [data, man, range, gran])
 
-  if (state === 'denied') return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Not found.</div>
+  if (state === 'locked') return <Lock onUnlocked={load} />
+  if (state === 'error') return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Could not load the stats. Try again in a moment.</div>
   if (!view || !man) return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Loading…</div>
 
   const { cur, m, days, S } = view
@@ -303,12 +310,15 @@ export default function App() {
             <SelectItem value="0">All time</SelectItem>
           </SelectContent>
         </Select>
+        {canTid && <button onClick={addTouchId} className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]"><Fingerprint className="size-4" aria-hidden="true" />Enable Touch ID</button>}
+        <button onClick={lockNow} aria-label="Lock" className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]"><LogOut className="size-4" aria-hidden="true" />Lock</button>
         <button onClick={load} className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]">
           <RefreshCw className={`size-4 ${spin ? 'animate-spin' : ''}`} aria-hidden="true" />Refresh
         </button>
       </div>
     </header>
 
+    {tidMsg && <p role="status" className="mb-4 rounded-xl bg-brand-soft px-4 py-2.5 text-sm text-brand">{tidMsg}</p>}
     <Panel title="Metrics" right={cmp}>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Total visits" value={m.total} change={m.totalD} context="One per browser session" />
