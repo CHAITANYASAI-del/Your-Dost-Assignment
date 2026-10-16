@@ -1,0 +1,412 @@
+{
+ "sections": [
+  {
+   "id": "hero",
+   "label": "Hero"
+  },
+  {
+   "id": "summary",
+   "label": "Summary"
+  },
+  {
+   "id": "task1",
+   "label": "Task 1 · Accounts Today"
+  },
+  {
+   "id": "task2",
+   "label": "Task 2 · your Journey"
+  },
+  {
+   "id": "process",
+   "label": "How I worked"
+  },
+  {
+   "id": "next",
+   "label": "What’s next"
+  },
+  {
+   "id": "contact",
+   "label": "Contact"
+  }
+ ],
+ "blocks": [
+  {
+   "id": "hero.1",
+   "section": "hero",
+   "kind": "meta",
+   "label": "Role · scope · output · workflow"
+  },
+  {
+   "id": "summary.1",
+   "section": "summary",
+   "kind": "card",
+   "label": "Task 01 · CSM dashboard"
+  },
+  {
+   "id": "summary.2",
+   "section": "summary",
+   "kind": "card",
+   "label": "Task 02 · Client iOS app"
+  },
+  {
+   "id": "task1.1",
+   "section": "task1",
+   "kind": "kicker",
+   "label": "The problem"
+  },
+  {
+   "id": "task1.2",
+   "section": "task1",
+   "kind": "kicker",
+   "label": "What I learned"
+  },
+  {
+   "id": "task1.3",
+   "section": "task1",
+   "kind": "li",
+   "label": "Urgency is about time, not severity."
+  },
+  {
+   "id": "task1.4",
+   "section": "task1",
+   "kind": "li",
+   "label": "CSMs act on reasons, not scores."
+  },
+  {
+   "id": "task1.5",
+   "section": "task1",
+   "kind": "li",
+   "label": "The quiet risks are the expensive ones."
+  },
+  {
+   "id": "task1.6",
+   "section": "task1",
+   "kind": "idea",
+   "label": "Big idea: Rank every account by the cost of waiting one "
+  },
+  {
+   "id": "task1.7",
+   "section": "task1",
+   "kind": "eq",
+   "label": "Priority equation"
+  },
+  {
+   "id": "task1.8",
+   "section": "task1",
+   "kind": "kicker",
+   "label": "Decisions and trade-offs"
+  },
+  {
+   "id": "task1.9",
+   "section": "task1",
+   "kind": "row",
+   "label": "Cap “Do first” at three"
+  },
+  {
+   "id": "task1.10",
+   "section": "task1",
+   "kind": "row",
+   "label": "Why → evidence → action on every card"
+  },
+  {
+   "id": "task1.11",
+   "section": "task1",
+   "kind": "row",
+   "label": "Evidence matched to the signal"
+  },
+  {
+   "id": "task1.12",
+   "section": "task1",
+   "kind": "row",
+   "label": "One merged queue"
+  },
+  {
+   "id": "task1.13",
+   "section": "task1",
+   "kind": "row",
+   "label": "Snooze needs a reason"
+  },
+  {
+   "id": "task1.14",
+   "section": "task1",
+   "kind": "row",
+   "label": "Show the ranking rules"
+  },
+  {
+   "id": "task1.15",
+   "section": "task1",
+   "kind": "frame",
+   "label": "Prototype · My Accounts Today"
+  },
+  {
+   "id": "task1.16",
+   "section": "task1",
+   "kind": "kicker",
+   "label": "How I’d know it works"
+  },
+  {
+   "id": "task2.1",
+   "section": "task2",
+   "kind": "kicker",
+   "label": "The problem"
+  },
+  {
+   "id": "task2.2",
+   "section": "task2",
+   "kind": "stat",
+   "label": "3.3% stat"
+  },
+  {
+   "id": "task2.3",
+   "section": "task2",
+   "kind": "kicker",
+   "label": "What I learned"
+  },
+  {
+   "id": "task2.4",
+   "section": "task2",
+   "kind": "li",
+   "label": "People open history to resume, not to review."
+  },
+  {
+   "id": "task2.5",
+   "section": "task2",
+   "kind": "li",
+   "label": "Fear of being seen blocks uptake."
+  },
+  {
+   "id": "task2.6",
+   "section": "task2",
+   "kind": "li",
+   "label": "Low energy means zero learning."
+  },
+  {
+   "id": "task2.7",
+   "section": "task2",
+   "kind": "li",
+   "label": "Streaks backfire here."
+  },
+  {
+   "id": "task2.8",
+   "section": "task2",
+   "kind": "idea",
+   "label": "Big idea: Answer three questions in order: what’s next f"
+  },
+  {
+   "id": "task2.9",
+   "section": "task2",
+   "kind": "row",
+   "label": "01 Home"
+  },
+  {
+   "id": "task2.10",
+   "section": "task2",
+   "kind": "row",
+   "label": "02 Check-in"
+  },
+  {
+   "id": "task2.11",
+   "section": "task2",
+   "kind": "row",
+   "label": "03 Timeline"
+  },
+  {
+   "id": "task2.12",
+   "section": "task2",
+   "kind": "row",
+   "label": "04 Patterns"
+  },
+  {
+   "id": "task2.13",
+   "section": "task2",
+   "kind": "row",
+   "label": "05 Moment"
+  },
+  {
+   "id": "task2.14",
+   "section": "task2",
+   "kind": "kicker",
+   "label": "Decisions and trade-offs"
+  },
+  {
+   "id": "task2.15",
+   "section": "task2",
+   "kind": "row",
+   "label": "Chapters with summaries"
+  },
+  {
+   "id": "task2.16",
+   "section": "task2",
+   "kind": "row",
+   "label": "“Day 24”, days since starting"
+  },
+  {
+   "id": "task2.17",
+   "section": "task2",
+   "kind": "row",
+   "label": "Check-in as a once-a-day sheet"
+  },
+  {
+   "id": "task2.18",
+   "section": "task2",
+   "kind": "row",
+   "label": "Faces from Heavy to Great"
+  },
+  {
+   "id": "task2.19",
+   "section": "task2",
+   "kind": "row",
+   "label": "A seven-bar week, faces on top"
+  },
+  {
+   "id": "task2.20",
+   "section": "task2",
+   "kind": "row",
+   "label": "Insights say “seems to help”"
+  },
+  {
+   "id": "task2.21",
+   "section": "task2",
+   "kind": "row",
+   "label": "Journal entries locked and blurred"
+  },
+  {
+   "id": "task2.22",
+   "section": "task2",
+   "kind": "kicker",
+   "label": "One iteration, start to finish: the mood chart"
+  },
+  {
+   "id": "task2.23",
+   "section": "task2",
+   "kind": "iter",
+   "label": "Mood chart: 4 versions"
+  },
+  {
+   "id": "task2.24",
+   "section": "task2",
+   "kind": "frame",
+   "label": "Prototype · your Journey"
+  },
+  {
+   "id": "task2.25",
+   "section": "task2",
+   "kind": "kicker",
+   "label": "How I’d know it works"
+  },
+  {
+   "id": "process.1",
+   "section": "process",
+   "kind": "card",
+   "label": "Figma"
+  },
+  {
+   "id": "process.2",
+   "section": "process",
+   "kind": "card",
+   "label": "Claude"
+  },
+  {
+   "id": "process.3",
+   "section": "process",
+   "kind": "card",
+   "label": "Claude Code"
+  },
+  {
+   "id": "next.1",
+   "section": "next",
+   "kind": "li",
+   "label": "A safety path for heavy days."
+  },
+  {
+   "id": "next.2",
+   "section": "next",
+   "kind": "li",
+   "label": "Test the riskiest assumptions."
+  },
+  {
+   "id": "next.3",
+   "section": "next",
+   "kind": "li",
+   "label": "Day one and accessibility."
+  },
+  {
+   "id": "next.4",
+   "section": "next",
+   "kind": "kicker",
+   "label": "Left out on purpose"
+  },
+  {
+   "id": "contact.1",
+   "section": "contact",
+   "kind": "about",
+   "label": "About me card"
+  }
+ ],
+ "events": [
+  {
+   "code": "ctaproto",
+   "label": "Hero · Open the working prototype"
+  },
+  {
+   "code": "ctadoc",
+   "label": "Hero · Full design rationale"
+  },
+  {
+   "code": "navsummary",
+   "label": "Nav · Summary"
+  },
+  {
+   "code": "navtask1",
+   "label": "Nav · Accounts Today"
+  },
+  {
+   "code": "navtask2",
+   "label": "Nav · your Journey"
+  },
+  {
+   "code": "navprocess",
+   "label": "Nav · How I worked"
+  },
+  {
+   "code": "navnext",
+   "label": "Nav · What's next"
+  },
+  {
+   "code": "navcontact",
+   "label": "Nav · Contact"
+  },
+  {
+   "code": "openp1",
+   "label": "Open full screen · Accounts Today"
+  },
+  {
+   "code": "openp2",
+   "label": "Open full screen · your Journey"
+  },
+  {
+   "code": "usep1",
+   "label": "Used the Accounts Today prototype"
+  },
+  {
+   "code": "usep2",
+   "label": "Used the your Journey prototype"
+  },
+  {
+   "code": "email",
+   "label": "Contact · Email"
+  },
+  {
+   "code": "portfolio",
+   "label": "Contact · Portfolio"
+  },
+  {
+   "code": "linkedin",
+   "label": "Contact · LinkedIn"
+  },
+  {
+   "code": "github",
+   "label": "Contact · GitHub"
+  }
+ ]
+}

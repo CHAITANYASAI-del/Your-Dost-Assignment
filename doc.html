@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YourDOST Design Rationale</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"PP Cirka";src:url("assets/fonts/PPCirka-Variable.ttf") format("truetype-variations"),url("assets/fonts/PPCirka-Variable.ttf") format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:"PP Cirka";src:url("assets/fonts/PPCirka-Light.otf") format("opentype");font-weight:300;font-display:swap}
+
+:root{--bg:#F6F6F4;--s:#fff;--line:#E8E8E4;--ink:#111110;--ink2:#55554F;--ink3:#93938C;--red:#E5484D;--amber:#D9840B;--blue:#3E63DD;--violet:#6E56CF;--sage:#7C9A84}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.w{max-width:820px;margin:0 auto;padding:64px 20px 120px}
+.eyebrow{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+h1{font-weight:600;font-size:34px;line-height:1.1;letter-spacing:-.03em;margin:10px 0 14px}
+h1 i{color:var(--ink3)}
+.lead{font-size:17px;color:var(--ink2);max-width:640px}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 8px}
+.toc a{font-size:13px;padding:6px 12px;border-radius:99px;background:var(--s);box-shadow:0 0 0 1px var(--line);color:var(--ink);text-decoration:none;font-weight:500}
+section{margin-top:64px}
+h2{font-weight:600;font-size:24px;letter-spacing:-.02em;line-height:1.2;margin-bottom:6px}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin:36px 0 12px}
+p{margin-bottom:10px}
+.muted{color:var(--ink2)}
+.card{background:var(--s);border-radius:10px;box-shadow:0 0 0 1px var(--line);padding:18px 20px;margin:12px 0}
+.big{font-size:18px;line-height:1.45;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.grid .card{margin:0}
+.grid b{display:block;margin-bottom:4px}
+.grid p{font-size:14px;color:var(--ink2);margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--s);border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FBFBFA}
+tr:last-child td{border:0}
+td b{font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+ul.clean{list-style:none}
+ul.clean li{padding:9px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:200px 1fr;gap:16px}
+ul.clean li:first-child{border:0}
+ul.clean li b{font-weight:600}
+ul.clean li span{color:var(--ink2)}
+.formula{font-family:ui-monospace,monospace;font-size:13px;border-left:2px solid var(--ink);padding:4px 0 4px 14px;margin:14px 0;color:var(--ink2)}
+.cta{display:inline-flex;gap:8px;align-items:center;background:var(--ink);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:500;font-size:14px;margin-top:16px}
+hr{border:0;border-top:1px solid var(--line);margin:64px 0 0}
+@media(max-width:640px){h1{font-size:28px}table{display:block;overflow-x:auto}ul.clean li{grid-template-columns:1fr;gap:2px}}
+</style>
+</head>
+<body><div class="w">
+
+<div class="eyebrow">YourDOST · Product UI/UX Designer assignment</div>
+<h1>Design rationale</h1>
+<p class="lead">Both tasks follow one rule: show less, and make what's shown explain itself. The CSM needs a short, ranked to-do list rather than a data wall. The user needs a mirror of their progress rather than a ledger of past actions.</p>
+<div class="toc"><a href="#principles">Principles</a><a href="#t1">01 · My Accounts Today</a><a href="#t2">02 · User Timeline</a><a href="#next">Validation & next steps</a></div>
+<a class="cta" href="design.html">Open the interactive design →</a>
+
+<section id="principles">
+<div class="eyebrow">Point of view</div>
+<h2>Design principles</h2>
+<ul class="clean" style="margin-top:12px">
+  <li><b>Colour means something, or it isn't there</b><span>The page is warm neutral. Ember means "act now", amber means "watch", teal means "done / progress". Status badges are the only place where several hues sit side by side, as in Linear or Stripe. A rising line is not painted green if it is still below target.</span></li>
+  <li><b>Type carries the emotion</b><span>A serif for human moments (greeting, brief, reflection) and a precise sans for work. The tone shifts without extra decoration.</span></li>
+  <li><b>Motion explains, never performs</b><span>Tabs slide to show where the filter moved. Finished rows drift out and the list closes the gap. The deadline ring fills as time runs out. Every animation answers "what just happened?". Reduced-motion users get none of it.</span></li>
+  <li><b>Reward the right behaviour</b><span>Finishing the urgent work gets a quiet "the urgent part of your day is done". For users, coming back is celebrated and missed days are never counted. Both reward progress, not streaks.</span></li>
+  <li><b>Detail is respect</b><span>Undo everywhere, keyboard paths, readable contrast, and plain privacy statements. The care you can't see is what makes it feel premium.</span></li>
+</ul>
+</section>
+
+<!-- ================= TASK 1 ================= -->
+<section id="t1">
+<div class="eyebrow">Task 01 · Internal</div>
+<h2>My Accounts Today</h2>
+<p class="muted">The CSM asks one question each morning: <i>"Where should I focus today?"</i> The page answers it in 5 seconds, and the next action is one click away.</p>
+
+<h3>Framing: what "needs attention today" means</h3>
+<div class="card" style="border-left:3px solid var(--ink);border-radius:4px 10px 10px 4px"><p class="big">An account needs attention today if <b>waiting one more day</b> makes the outcome worse.</p></div>
+<p>That's different from "has a problem". A slow decline with a renewal 8 months out can wait. A campaign launching Monday with 12% sign-ups can't. The test is <b>cost of delay</b>, not severity alone.</p>
+<div class="formula">priority = cost of delay (deadline ≤72h, renewal ≤30d) × account weight (members, ARR) × change since yesterday</div>
+<p class="muted">The backend computes this. The UI never shows the score. It shows the <b>reason in plain language</b>, because CSMs act on reasons, not numbers.</p>
+
+<h3>The four signal types → one queue</h3>
+<div class="grid">
+  <div class="card"><b><span class="dot" style="background:#E0582A"></span>Risk</b><p>Renewal near, champion left, escalations, falling utilisation</p></div>
+  <div class="card"><b><span class="dot" style="background:#D4952B"></span>Engagement drop</b><p>&gt;20% drop in 14 days, segmented to where it's happening</p></div>
+  <div class="card"><b><span class="dot" style="background:#4C7BE0"></span>Follow-up</b><p>Promises made, meetings today, overdue items</p></div>
+  <div class="card"><b><span class="dot" style="background:#7B63D6"></span>Campaign</b><p>Launching soon and underperforming, blocked on approval, results ready</p></div>
+</div>
+<p style="margin-top:12px">Today these live in four separate views. We merge them into <b>one ranked list</b>, and the type becomes a tag rather than a place you navigate to.</p>
+
+<h3>Layout & hierarchy</h3>
+<table>
+<tr><th>Zone</th><th>What</th><th>Why</th></tr>
+<tr><td><b>Header</b></td><td>Greeting · "8 accounts need you" · search · log touchpoint</td><td>One number sets the scope of the day. Stays pinned while scrolling.</td></tr>
+<tr><td><b>Do first (max 3)</b></td><td>Cards: account · status badge → why (one sentence) → evidence → deadline → one action</td><td>Capped at 3 on purpose. If everything is urgent, nothing is. Overflow drops into Also today with an Urgent tag.</td></tr>
+<tr><td><b>Also today</b></td><td>A table sorted by due time. Rows expand inline for why + next step</td><td>One "Due" format (when the action is due), so it scans top to bottom. "New" marks what changed since yesterday.</td></tr>
+<tr><td><b>Watching / Healthy</b></td><td>Collapsed, with counts only</td><td>Reassurance that nothing is lost, without the noise.</td></tr>
+<tr><td><b>Today's brief + calendar</b></td><td>A day plan (2 h of work, what to clear before which meeting) and today's meetings</td><td>Adds what the list can't: time. It plans the work around the calendar instead of repeating the cards.</td></tr>
+<tr><td><b>Sidebar</b></td><td>Navigation, pinned views, "Signals synced 7:58 AM"</td><td>Freshness is shown, so the CSM knows the data is current before acting.</td></tr>
+</table>
+
+<h3>Key decisions</h3>
+<ul class="clean">
+  <li><b>Why → Evidence → Action</b><span>Every card follows the order a CSM thinks in. The why is one sentence. The evidence is one visual that matches the signal: a trend line for falling usage, progress toward a goal for a campaign, a day strip for an overdue promise. The action is a short verb ("Send assets to Dean"), never "View".</span></li>
+  <li><b>Visuals are chosen, not decorated</b><span>A follow-up has no trend, so it gets no line chart. It gets a 14-day strip that makes "2 days late" countable at a glance. Rising registrations stay neutral, not green, because 12% is still far below the 30% goal.</span></li>
+  <li><b>One primary action per card</b><span>The system suggests the next step. Done and Snooze sit next to it as quiet secondary actions. This removes the "what now?" moment.</span></li>
+  <li><b>Done ≠ disappear</b><span>Finished items animate out, move to "Done today", can be reopened, and fill the progress tracker. Clearing all three urgent cards shows "The urgent part of your day is done".</span></li>
+  <li><b>Snooze needs a reason</b><span>Snooze offers Later today, Tomorrow, Next week or Waiting on client. In customer success, why something waits matters as much as when.</span></li>
+  <li><b>Drawer, not a new page</b><span>Account detail opens in a side drawer, so the CSM never loses their place in the queue.</span></li>
+  <li><b>Bulk actions float</b><span>Select rows and a floating bar appears with snooze (with a day stepper), reassign, and done. It's hidden until needed.</span></li>
+  <li><b>Trust in the ranking</b><span>"How is this ranked?" sits next to Do first and explains the rules, including what the deadline ring means. A ranked list nobody understands gets ignored.</span></li>
+  <li><b>Speed for daily use</b><span>Keys 1–3 open the top cards, ⌘K searches, Esc closes. Daily tools should reward repetition.</span></li>
+</ul>
+
+<h3>Intentionally excluded</h3>
+<table>
+<tr><th>Left out</th><th>Why</th></tr>
+<tr><td>Full accounts table, portfolio charts</td><td>These answer "how is my book?", not "what do I do today?". They live in All accounts / Reports.</td></tr>
+<tr><td>Numeric health scores</td><td>A score invites debate ("why 62?"). A reason invites action.</td></tr>
+<tr><td>Any individual employee/student data</td><td>Privacy is non-negotiable in mental health. CSMs only see aggregates, and the drawer says so.</td></tr>
+<tr><td>Healthy accounts in the main list</td><td>Shown only as a collapsed count. Nothing to do there.</td></tr>
+<tr><td>Repeating the same count everywhere</td><td>"8 need you" appears once in the header. The brief and sidebar add new information (time plan, data freshness) instead.</td></tr>
+<tr><td>Activity feed / notifications</td><td>A chronological feed is the opposite of prioritisation.</td></tr>
+<tr><td>Customisable widgets</td><td>For v1, an opinionated layout beats configuration. Revisit after usage data.</td></tr>
+</table>
+</section>
+
+<!-- ================= TASK 2 ================= -->
+<section id="t2">
+<div class="eyebrow">Task 02 · Client-facing</div>
+<h2>Reimagining the User Timeline</h2>
+
+<h3>Framing: the purpose of a mental health timeline</h3>
+<div class="card" style="border-left:3px solid var(--ink);border-radius:4px 10px 10px 4px"><p class="big">Not a record of what you did, but evidence that <b>you're moving</b>, and an easy door back in.</p></div>
+<p>Progress in mental health is slow and hard to feel. A good timeline makes it visible in three ways: <b>continuity</b> (I keep showing up), <b>patterns</b> (what helps me), and <b>re-entry</b> (the next small step). It must do this without judging, exposing, or nagging.</p>
+
+<h3>Structure</h3>
+<table>
+<tr><th>Layer</th><th>Question it answers</th><th>Screen</th></tr>
+<tr><td><b>Today</b>: companion, this week’s overview, today’s entry, next session</td><td>What’s my next step?</td><td>01</td></tr>
+<tr><td><b>Check-in sheet</b>: once a day, a few seconds after opening</td><td>How am I, right now?</td><td>02</td></tr>
+<tr><td><b>Journey › Timeline</b>: chapters, grouped by day</td><td>How far have I come?</td><td>03</td></tr>
+<tr><td><b>Journey › Patterns</b>: mood chart, insights, milestones</td><td>What seems to help me?</td><td>04</td></tr>
+<tr><td><b>Moment + privacy sheet</b></td><td>What did I take from this, and who sees it?</td><td>05</td></tr>
+</table>
+<p style="margin-top:12px" class="muted">Re-engagement comes first, the past second. Most people opening "History" are actually looking for where they left off.</p>
+
+<h3>Structural decisions</h3>
+<ul class="clean">
+  <li><b>Chapters, not a feed</b><span>Activity is grouped into stretches ("Finding a rhythm") headed by a summary card: sessions, check-ins, programs, and one line on how it felt. Inside, items group by day. A narrative is easier to reflect on than 200 rows. Older chapters collapse to one row.</span></li>
+  <li><b>Timeline and Patterns are two views of one Journey</b><span>A segmented control switches between "what happened" and "what it means", so reflection is one tap away but never forced on the user.</span></li>
+  <li><b>One timeline, filterable</b><span>Sessions, journal, mood, programs and chat sit together, because continuity spans tools. Each type has its own coloured icon (as in Apple Health), so the timeline scans without reading. Filter chips narrow it, and empty days hide.</span></li>
+  <li><b>Takeaways over transcripts</b><span>A session shows <i>the user's own takeaway</i>, not therapist notes. It's reflective, and it keeps the therapist's notes confidential.</span></li>
+  <li><b>A companion, then the next step</b><span>Screen 1 opens on a calm companion character standing in front of “Day 24”: days since you started, never a streak, so a gap never resets anything. Headspace’s Ebb shows a companion lowers the barrier to opening up. Under it: this week’s overview, today’s reflection, the next session and the week in faces. The mood check-in arrives as a sheet instead.</span></li>
+  <li><b>Every moment has a next step</b><span>Each past item links forward: try the exercise she suggested, add it to the next session's agenda, reflect. The history itself becomes the re-engagement surface.</span></li>
+  <li><b>Patterns are opt-in & explained</b><span>Insights say "seems to help · 3 of 4 times · from your check-ins". They're observations, not diagnoses, and there's a toggle to turn them off.</span></li>
+</ul>
+
+<h3>Emotional decisions</h3>
+<ul class="clean">
+  <li><b>No streaks, no shame</b><span>Gaps appear as "A quiet stretch · 6 days. You came back, and that counts." Broken streaks drive people away at exactly the wrong moment.</span></li>
+  <li><b>A week you can read in a glance</b><span>Patterns shows the last seven days as one bar each. Taller means lighter, and the face on top says how it felt, so there is no legend to learn. The headline (“Mostly calm”) and one pill (“5 of 6 lighter”) give the takeaway. A missed day is a dashed outline, not a gap or a failure. No scores, and never red.</span></li>
+  <li><b>Check-in comes to you, once</b><span>The mood check-in is not a card on the home screen. A card with a face already highlighted reads like a record, not a question. Instead, a sheet slides up a few seconds after opening, only if you haven’t checked in today, and never mid-task. Five equal face pills, nothing pre-selected. Optional “what’s behind it” tags unlock after a pick. “Not now” silences it until tomorrow.</span></li>
+  <li><b>A gentle prompt, not a task</b><span>It is not a reminder or a to-do. “Today’s reflection” is a stacked card with one reflective question (“What is one small thing I noticed today?”), tagged “Optional · 2 min”, with a one-line field whose send button stays disabled until something is typed. It invites without demanding.</span></li>
+  <li><b>Warm, quiet language</b><span>"Welcome back", "No pressure", "Moments you reached". Milestones celebrate showing up, not performance.</span></li>
+  <li><b>One colour with a job</b><span>The single action colour is the vivid blue of the companion’s cape, used only for primary buttons and selected states. Mood colours appear only where they are data (faces, mood chart).</span></li>
+  <li><b>Native and familiar</b><span>iOS conventions (large titles, segmented control, sheets, switches, a floating glass tab bar) mean nothing has to be learned when energy is low. Warmth comes from one soft sky behind every screen, the companion, playful face tiles and a serif for reflective text.</span></li>
+  <li><b>Motion is calm</b><span>Illustrations float slowly and faces lift on tap. Animations only move position, scale and opacity, so they stay at 60fps, and they turn off if the user prefers reduced motion.</span></li>
+</ul>
+
+<h3>Privacy decisions</h3>
+<ul class="clean">
+  <li><b>Say who can see it</b><span>"Only you can see this" sits under the check-in and the reflection field. The privacy sheet opens with a plain statement: your employer or college never sees individual activity, only anonymous totals. This is the #1 fear in B2B mental health.</span></li>
+  <li><b>Locked by default</b><span>Journal entries show a lock and a blurred title until tapped, so the screen is safe in an open office or a shared hostel room. Discreet mode blurs every entry.</span></li>
+  <li><b>Control at every item</b><span>From any moment, ··· opens a sheet to hide it, delete it (with undo for 30 days), turn on discreet mode, or lock the Journey tab with Face ID.</span></li>
+</ul>
+
+<h3>Intentionally excluded</h3>
+<table>
+<tr><th>Left out</th><th>Why</th></tr>
+<tr><td>Streaks, badges, leaderboards</td><td>Gamification turns care into performance. Missing a day shouldn't feel like failing.</td></tr>
+<tr><td>Numeric mood scores / clinical scales on the timeline</td><td>Assessment results belong in a dedicated, contextualised view with a professional, not a casual scroll.</td></tr>
+<tr><td>Push nudges from the timeline</td><td>Re-engagement happens when the user opens the app, not through guilt pings.</td></tr>
+<tr><td>Sharing / social</td><td>Out of scope and risky. Possible later: share a chapter with your own therapist, with consent.</td></tr>
+</table>
+</section>
+
+<!-- ================= NEXT ================= -->
+<section id="next">
+<div class="eyebrow">Validation</div>
+<h2>How I'd know it works</h2>
+<div class="grid" style="margin-top:16px">
+  <div class="card"><b>CSM dashboard</b><p>Time to first action after login · % of "Do first" items actioned the same day · renewal saves · CSM trust in ranking ("Not relevant?" feedback rate)</p></div>
+  <div class="card"><b>User timeline</b><p>Return rate after a gap · next-session and reflection tap-through · insight opt-out rate (a high rate signals the tone is wrong) · qualitative "felt judged?" in interviews</p></div>
+</div>
+<h3>Assumptions to test</h3>
+<p class="muted">• A cap of 3 for "Do first" fits a typical book of ~30 accounts. Test with 3–5 CSMs on real data.<br>• Users want insights at all. Run a diary study before shipping patterns broadly.<br>• Chapter auto-naming reads as warm, not presumptuous. If it doesn't, fall back to month names.</p>
+</section>
+
+<hr>
+<p class="muted" style="margin-top:20px;font-size:13px">All names and data are fictional. Interaction patterns are inspired by Planes, SpaceUI, NQU, UI Arc, BeUI and Aceternity, and rebuilt in plain HTML/CSS. The visual identity is original. Task 2 imagery (the companion character, sky, glass “Day” artwork, dove, “1” medal and the photo thumbnails on the Quick tools cards) comes from my moodboard and is used for this mockup only; credit belongs to the original artists. Tool and therapist photos: Unsplash (Unsplash License). 3D faces: Microsoft Fluent Emoji (MIT).</p>
+</div></body></html>

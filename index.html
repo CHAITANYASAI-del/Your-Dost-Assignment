@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">
+<title>YourDOST Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"PP Cirka";src:url("assets/fonts/PPCirka-Variable.ttf") format("truetype-variations"),url("assets/fonts/PPCirka-Variable.ttf") format("truetype");font-weight:100 900;font-display:swap}
+:root{--bg:#F6F4F0;--card:#fff;--ink:#14171f;--ink2:#4b5260;--ink3:#8a909c;--line:#E7E3DC;--blue:#1677F2;--blue-soft:#EAF2FE;--ember:#E5603B;--teal:#2E9C8F}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--ink);font-family:Figtree,system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+.serif{font-family:"PP Cirka",Georgia,serif}
+a{color:var(--blue);text-decoration:none}
+nav.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;gap:22px;height:56px;overflow-x:auto;white-space:nowrap}
+nav.top b{font-weight:700;margin-right:auto}
+nav.top a{color:var(--ink2);font-size:14px;font-weight:500}
+nav.top a:hover{color:var(--ink)}nav.top a{padding:6px 12px;border-radius:99px;transition:background .2s,color .2s}nav.top a.on{background:var(--ink);color:#fff}nav.top .wrap{gap:4px!important}nav.top b{margin-right:auto;padding-right:16px}
+header.hero{padding:88px 0 56px;position:relative;overflow:hidden}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+h1{font-family:"PP Cirka",Georgia,serif;font-weight:500;font-size:clamp(44px,7vw,84px);line-height:1.02;letter-spacing:-.025em;margin:14px 0 20px;max-width:620px}
+h1 em{font-style:normal;color:var(--ink3)}
+.lede{font-size:20px;color:var(--ink2);max-width:580px}
+.hero-mas{position:absolute;right:-110px;top:44px;width:430px;transform:rotate(-24deg);filter:drop-shadow(0 30px 30px rgba(22,119,242,.25));pointer-events:none}
+@media (max-width:1000px){.hero-mas{display:none}}h1,.lede{position:relative;z-index:1}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:44px}
+.meta div{background:var(--card);padding:18px 20px}
+.meta span{display:block;font-size:12px;color:var(--ink3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.meta b{font-weight:600;font-size:15px}
+@media (max-width:720px){.meta{grid-template-columns:1fr 1fr}}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border-radius:99px;font-weight:600;font-size:15px}
+.btn.p{background:var(--blue);color:#fff}
+.btn.s{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+section{padding:72px 0;border-top:1px solid var(--line)}
+h2{font-family:"PP Cirka",Georgia,serif;font-weight:500;font-size:clamp(32px,4.5vw,48px);line-height:1.08;letter-spacing:-.02em;margin:10px 0 16px}
+h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin:40px 0 12px}
+p{color:var(--ink2);max-width:700px}
+p+p{margin-top:12px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}@media (max-width:900px){.g4{grid-template-columns:1fr 1fr}}@media (max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.card>b{display:block;font-size:16px;margin-bottom:6px;color:var(--ink)}
+.card p{font-size:14.5px}
+.num{font-family:"PP Cirka",Georgia,serif;font-size:40px;font-weight:600;line-height:1;color:var(--ink);margin-bottom:8px}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ember);border-radius:12px;padding:16px 18px;margin:20px 0;color:var(--ink);overflow-x:auto}
+.quote{font-family:"PP Cirka",Georgia,serif;font-size:clamp(24px,3.2vw,34px);line-height:1.25;color:var(--ink);max-width:760px;margin:8px 0}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:14.5px;margin-top:16px}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+td{color:var(--ink2)}td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tbl{overflow-x:auto}
+.frame{margin-top:28px;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 30px 60px -30px rgba(20,30,50,.25)}
+.frame .bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink3)}
+.frame .bar i{width:12px;height:12px;border-radius:50%;background:#FF5F57;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18)}.frame .bar i:nth-child(2){background:#FEBC2E}.frame .bar i:nth-child(3){background:#28C840}
+.frame .bar a{margin-left:auto;font-weight:600}
+.frame .vp{position:relative;width:100%;overflow:hidden;background:#F1EEE8}.frame iframe{display:block;width:1440px;height:900px;border:0;background:#F1EEE8;transform-origin:0 0;position:absolute;left:0;top:0}
+
+.iter{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+@media (max-width:760px){.iter{grid-template-columns:1fr 1fr}}
+.iter div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:13.5px;color:var(--ink2)}
+.iter div.win{border-color:var(--blue);background:var(--blue-soft)}
+.iter b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.iter span{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ink3);margin-bottom:8px}
+.iter .win span{color:var(--blue)}
+ul.clean{list-style:none;margin-top:14px;max-width:720px}
+ul.clean li{position:relative;padding-left:22px;color:var(--ink2);margin-bottom:10px}
+ul.clean li::before{content:"";position:absolute;left:4px;top:.65em;width:7px;height:7px;border-radius:50%;background:var(--blue)}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.art{position:relative;background:linear-gradient(180deg,#9CC8FA,#DCEBFD);border-radius:28px;height:340px;overflow:hidden}
+.art img{position:absolute}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--blue-soft);color:var(--blue);margin-right:6px;margin-top:6px}
+footer{padding:48px 0 80px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+footer p{color:var(--ink3);font-size:13px;max-width:820px}
+
+.tldr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+@media (max-width:760px){.tldr{grid-template-columns:1fr}}
+.tldr .card{padding:26px}
+.tldr .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.tldr .big{font-family:"PP Cirka",Georgia,serif;font-size:28px;line-height:1.15;color:var(--ink);margin:8px 0 10px}
+.stat{display:flex;gap:22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:22px 0;max-width:760px}
+.stat .num{margin:0;font-size:44px;flex:none}
+.stat p{font-size:15px;margin:0}
+.stat small{display:block;color:var(--ink3);font-size:12.5px;margin-top:4px}
+.big-idea{font-family:"PP Cirka",Georgia,serif;font-size:clamp(26px,3.4vw,38px);line-height:1.18;color:var(--ink);border-left:3px solid var(--blue);padding-left:20px;margin:28px 0;max-width:820px}
+.t1 .big-idea{border-color:var(--ember)}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:44px 0 6px}
+.eq{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:20px 0}
+.eq i{font-style:normal;display:grid;place-items:center;font-size:22px;color:var(--ink3);font-weight:500;padding:0 2px}
+.eq-r{display:grid;place-items:center;background:var(--ember);color:#fff;border-radius:14px;padding:0 20px;font-weight:700;font-size:16px;min-height:66px}
+.eq-t{flex:1;min-width:150px;background:#FBF3EF;border-radius:14px;padding:12px 16px}
+.eq-t b{display:block;font-size:16px;color:var(--ink)}
+.eq-t small{display:block;font-size:12.5px;color:var(--ink2);margin-top:2px}
+@media (max-width:760px){.eq{flex-direction:column}.eq i{padding:0}.eq-r{min-height:48px}}
+.about{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:32px;margin-top:20px}
+.about .av{width:132px;height:132px;image-rendering:auto;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px var(--blue-soft)}
+.about h3{margin:0 0 4px;font-family:"PP Cirka",Georgia,serif;font-weight:500;font-size:32px;letter-spacing:-.01em}
+.about p{max-width:none;font-size:17px;line-height:1.65}
+.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.links a{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:99px;background:var(--bg);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:14px}
+.links a:hover{border-color:var(--blue);color:var(--blue)}
+.links a.p{background:var(--blue);border-color:var(--blue);color:#fff}
+.links svg{width:17px;height:17px}
+@media (max-width:640px){.about{grid-template-columns:1fr;padding:24px}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap"><b>YourDOST · Case study</b><a href="#summary" data-ev="navsummary">Summary</a><a href="#task1" data-ev="navtask1">Accounts Today</a><a href="#task2" data-ev="navtask2">your Journey</a><a href="#process" data-ev="navprocess">How I worked</a><a href="#next" data-ev="navnext">What’s next</a><a href="#contact" data-ev="navcontact">Contact</a></div></nav>
+
+<header class="hero" id="hero"><div class="wrap">
+<img class="hero-mas" src="assets/mascot2.png" alt="">
+<span class="eyebrow">YourDOST · Product UI/UX Designer assignment</span>
+<h1>Show less, <em>and make what’s shown</em> explain itself.</h1>
+<p class="lede">Two products on opposite ends of the same business: the tool a Customer Success Manager uses to keep a client healthy, and the app a person in therapy uses to keep going.</p>
+<div class="cta"><a class="btn p" href="design.html" data-ev="ctaproto">Open the working prototype →</a><a class="btn s" href="doc.html" data-ev="ctadoc">Full design rationale</a></div>
+<div class="meta" data-b="hero.1">
+<div><span>Role</span><b>Sole designer, research to build</b></div>
+<div><span>Scope</span><b>Web dashboard · iOS app, 5 screens</b></div>
+<div><span>Output</span><b>Coded, clickable prototype</b></div>
+<div><span>Workflow</span><b>Figma → Claude → Claude Code</b></div>
+</div>
+</div></header>
+
+<section id="summary"><div class="wrap">
+<span class="eyebrow">Summary</span>
+<h2>One business, two people, one idea.</h2>
+<p>YourDOST sells care to companies and colleges, and earns its renewal when people actually use it. Usage breaks in two places: the CSM doesn’t notice a client slipping in time, and the user doesn’t come back after a hard week. I designed for both breaks.</p>
+<div class="tldr">
+<div class="card" data-b="summary.1"><span class="k">Task 01 · CSM dashboard</span><div class="big">A ranked to-do list, not a data wall.</div><p>Every account is scored by the cost of waiting a day. The CSM sees three things to do first, each with one reason and one action.</p></div>
+<div class="card" data-b="summary.2"><span class="k">Task 02 · Client iOS app</span><div class="big">A mirror of progress, not a ledger of misses.</div><p>History becomes “your Journey”: what’s next first, chapters of how far you’ve come, and gentle patterns of what seems to help.</p></div>
+</div>
+</div></section>
+
+<section id="task1" class="t1"><div class="wrap">
+<span class="eyebrow">Task 01 · Internal tool</span>
+<h2>My Accounts Today</h2>
+
+<p class="kicker" data-b="task1.1">The problem</p>
+<p>A CSM looks after about 30 accounts. The signals that one of them is slipping are spread across the CRM, usage dashboards, campaign sheets and email. Mornings go on assembling the picture, and by the time a pattern is obvious the renewal conversation is already hard.</p>
+
+<p class="kicker" data-b="task1.2">What I learned</p>
+<ul class="clean">
+<li data-b="task1.3"><b>Urgency is about time, not severity.</b> A badly performing account renewing in eight months can wait. A small campaign launching Monday at 12% sign-ups cannot.</li>
+<li data-b="task1.4"><b>CSMs act on reasons, not scores.</b> Health scores in tools like Gainsight are often ignored because they can’t say why. A number sends people back to five tabs.</li>
+<li data-b="task1.5"><b>The quiet risks are the expensive ones.</b> A champion leaving or usage sliding in the last 90 days before renewal rarely looks urgent until it’s late.</li>
+</ul>
+
+<div class="big-idea" data-b="task1.6">Rank every account by the cost of waiting one more day, and show the reason, never the score.</div>
+<div class="eq" data-b="task1.7">
+<div class="eq-r"><span>Priority</span></div><i>=</i>
+<div class="eq-t"><b>Cost of delay</b><small>Deadline ≤ 72h · renewal ≤ 30 days</small></div><i>×</i>
+<div class="eq-t"><b>Account weight</b><small>Members · contract value</small></div><i>×</i>
+<div class="eq-t"><b>Change</b><small>Since yesterday</small></div>
+</div>
+
+<p class="kicker" data-b="task1.8">Decisions and trade-offs</p>
+<div class="tbl"><table>
+<tr><th>Decision</th><th>Rejected alternative</th><th>Why</th></tr>
+<tr data-b="task1.9"><td>Cap “Do first” at three</td><td>Show every flagged account</td><td>If everything is urgent, nothing is. Overflow drops into “Also today” with an Urgent tag, so nothing is hidden.</td></tr>
+<tr data-b="task1.10"><td>Why → evidence → action on every card</td><td>A health score and a chart</td><td>It follows the order a CSM thinks in. Actions are verbs (“Send assets to Dean”), never “View”.</td></tr>
+<tr data-b="task1.11"><td>Evidence matched to the signal</td><td>The same line chart everywhere</td><td>A late follow-up gets a 14-day strip, a campaign gets progress to goal. A rising 12% stays neutral, not green, because it’s still far below target.</td></tr>
+<tr data-b="task1.12"><td>One merged queue</td><td>Separate Risk, Engagement, Follow-up and Campaign views</td><td>Type becomes a tag, not a place to navigate to. One list answers “where do I start?”.</td></tr>
+<tr data-b="task1.13"><td>Snooze needs a reason</td><td>A plain snooze button</td><td>“Waiting on client” and “Tomorrow” mean different things to the team and to the ranking.</td></tr>
+<tr data-b="task1.14"><td>Show the ranking rules</td><td>A black-box model</td><td>“How is this ranked?” and “Not relevant?” build trust, and feed the model better data.</td></tr>
+</table></div>
+
+<div class="frame" data-b="task1.15"><div class="bar"><i></i><i></i><i></i>&nbsp;My Accounts Today · live prototype<a href="design.html" target="_blank" data-ev="openp1">Open full screen ↗</a></div><div class="vp"><iframe data-fr="p1" src="design.html" title="My Accounts Today prototype" loading="lazy"></iframe></div></div>
+
+<p class="kicker" data-b="task1.16">How I’d know it works</p>
+<p>Time from login to first action. Share of “Do first” items actioned the same day. Renewal saves on accounts that were flagged. And the “Not relevant?” rate, which tells us whether CSMs trust the ranking.</p>
+</div></section>
+
+<section id="task2"><div class="wrap">
+<span class="eyebrow">Task 02 · Client iOS app</span>
+<h2>your Journey</h2>
+<div class="split">
+<div>
+<p class="kicker" style="margin-top:0" data-b="task2.1">The problem</p>
+<p>Today’s History tab lists sessions and logs in date order. For someone in therapy it reads like a record of how often they didn’t show up, and it is usually opened right after a gap, at the worst possible moment.</p>
+<div class="stat" data-b="task2.2"><div class="num">3.3%</div><p>Median 30-day retention of mental-health apps. Most people try once and drift.<small>Baumel et al., Journal of Medical Internet Research, 2019</small></p></div>
+</div>
+<div class="art"><img src="assets/sky.jpg" alt="" style="inset:0;width:100%;height:100%;object-fit:cover;opacity:.8"><img src="assets/mascot.png" alt="The YourDOST companion" style="left:50%;top:22px;height:470px;transform:translateX(-50%);filter:drop-shadow(0 24px 24px rgba(40,40,160,.35))"></div>
+</div>
+
+<p class="kicker" data-b="task2.3">What I learned</p>
+<ul class="clean">
+<li data-b="task2.4"><b>People open history to resume, not to review.</b> So the next step has to come before the past.</li>
+<li data-b="task2.5"><b>Fear of being seen blocks uptake.</b> With employer- or college-paid care, the first worry is who can see what. Many open the app in a hostel room or an open office.</li>
+<li data-b="task2.6"><b>Low energy means zero learning.</b> On a heavy day nobody decodes a chart or learns a new pattern.</li>
+<li data-b="task2.7"><b>Streaks backfire here.</b> A broken streak lands on the person’s worst week, which is exactly when they’re most likely to quit.</li>
+</ul>
+
+<div class="big-idea" data-b="task2.8">Answer three questions in order: what’s next for me, how far I’ve come, and what seems to help.</div>
+
+<div class="tbl"><table>
+<tr><th>Screen</th><th>What it holds</th><th>Question</th></tr>
+<tr data-b="task2.9"><td>01 Home</td><td>Companion, “Day 24”, the next session, today’s reflection, the week in faces</td><td>What’s next for me?</td></tr>
+<tr data-b="task2.10"><td>02 Check-in</td><td>A sheet, once a day, only if you haven’t checked in</td><td>How am I right now?</td></tr>
+<tr data-b="task2.11"><td>03 Timeline</td><td>Named chapters with summaries, grouped by day</td><td>How far have I come?</td></tr>
+<tr data-b="task2.12"><td>04 Patterns</td><td>The week chart, opt-in insights, moments reached</td><td>What seems to help?</td></tr>
+<tr data-b="task2.13"><td>05 Moment</td><td>Your own takeaway, a next step, who can see it</td><td>What did I take from this?</td></tr>
+</table></div>
+
+<p class="kicker" data-b="task2.14">Decisions and trade-offs</p>
+<div class="tbl"><table>
+<tr><th>Decision</th><th>Rejected alternative</th><th>Why</th></tr>
+<tr data-b="task2.15"><td>Chapters with summaries</td><td>An infinite feed</td><td>A narrative (“Finding a rhythm”) is easier to reflect on than 200 rows, and older chapters fold away.</td></tr>
+<tr data-b="task2.16"><td>“Day 24”, days since starting</td><td>A streak counter</td><td>A gap never resets anything. Coming back is celebrated: “You came back, and that counts.”</td></tr>
+<tr data-b="task2.17"><td>Check-in as a once-a-day sheet</td><td>A mood card on Home</td><td>A card with a face already selected reads like a record, not a question. “Not now” silences it until tomorrow.</td></tr>
+<tr data-b="task2.18"><td>Faces from Heavy to Great</td><td>Great first</td><td>It reads like a scale, matches the chart, and removes the pull to tap “Great” just to get through.</td></tr>
+<tr data-b="task2.19"><td>A seven-bar week, faces on top</td><td>Dot matrix, gauge and spectrum (my first version)</td><td>Four encodings were too much on a heavy day. Taller is lighter, and the face says how it felt.</td></tr>
+<tr data-b="task2.20"><td>Insights say “seems to help”</td><td>Confident recommendations</td><td>“3 of 4 times · from your check-ins” is honest evidence, not a diagnosis, and can be switched off.</td></tr>
+<tr data-b="task2.21"><td>Journal entries locked and blurred</td><td>Open titles</td><td>Safe to open over a shoulder. Employers and colleges only ever see anonymous totals, and the app says so.</td></tr>
+</table></div>
+
+<p class="kicker" data-b="task2.22">One iteration, start to finish: the mood chart</p>
+<div class="iter" data-b="task2.23">
+<div><span>V1</span><b>Dot matrix + gauge + spectrum</b>Rich, but four encodings to decode at once.</div>
+<div><span>V2</span><b>Two weeks of faces</b>Familiar, but no clear takeaway.</div>
+<div><span>V3</span><b>One number, one split bar</b>Clear, but lost the shape of the week.</div>
+<div class="win"><span>SHIPPED</span><b>Seven bars, faces on top</b>Readable in a glance, with one headline.</div>
+</div>
+
+<div class="frame" data-b="task2.24"><div class="bar"><i></i><i></i><i></i>&nbsp;your Journey · live prototype<a href="design.html#timeline" target="_blank" data-ev="openp2">Open full screen ↗</a></div><div class="vp"><iframe data-fr="p2" src="design.html#timeline" title="your Journey prototype" loading="lazy"></iframe></div></div>
+
+<p class="kicker" data-b="task2.25">How I’d know it works</p>
+<p>Return rate after a gap of a week or more. Tap-through on the next session and today’s reflection. The insight opt-out rate, where a high number means the tone is wrong. And one interview question: “did anything here make you feel judged?”</p>
+</div></section>
+
+<section id="process"><div class="wrap">
+<span class="eyebrow">How I worked</span>
+<h2>Figma to think, Claude to iterate, Claude Code to ship.</h2>
+<div class="grid g3" style="margin-top:20px">
+<div class="card" data-b="process.1"><div class="num">01</div><b>Figma</b><p>Moodboards, early layouts and the core pieces: the face set, cards and colour roles.</p></div>
+<div class="card" data-b="process.2"><div class="num">02</div><b>Claude</b><p>A sparring partner. I pressure-tested UX decisions, critiqued screens against the brief and explored many variations fast.</p></div>
+<div class="card" data-b="process.3"><div class="num">03</div><b>Claude Code</b><p>The prototype is real HTML, CSS and JS: working sheets, live states, 60fps motion and reduced-motion support.</p></div>
+</div>
+<p style="margin-top:20px">Working AI-native changed the economics of iteration. The mood chart went through four complete, clickable versions in one sitting, judged on a real screen rather than in a description. Before submitting I ran a UX and brief-coverage audit with Claude, which caught details such as session counts that didn’t add up across screens. The speed came from AI; the decisions, and the reasons behind them, are mine.</p>
+</div></section>
+
+<section id="next"><div class="wrap">
+<span class="eyebrow">What’s next</span>
+<h2>What I’d do with another two weeks.</h2>
+<ul class="clean">
+<li data-b="next.1"><b>A safety path for heavy days.</b> A Heavy check-in offers “Want to talk to someone now?”, with a listener chat and a crisis helpline. This is the first thing I’d add.</li>
+<li data-b="next.2"><b>Test the riskiest assumptions.</b> Does a cap of three fit a real CSM book? Run it with 3–5 CSMs on their own data. Do users want insights at all? Run a short diary study before shipping Patterns.</li>
+<li data-b="next.3"><b>Day one and accessibility.</b> A first-day Journey before any chapters exist, Dynamic Type, VoiceOver labels on every face, and higher-contrast secondary text.</li>
+</ul>
+<p class="kicker" data-b="next.4">Left out on purpose</p>
+<p>Streaks, badges and leaderboards, because care shouldn’t feel like performance. Numeric mood scores on the timeline, because assessments belong with a professional. Guilt-driven push nudges. Sharing, until there’s a consent-first way to share a chapter with your own therapist.</p>
+</div></section>
+
+<section id="contact"><div class="wrap">
+<span class="eyebrow">About me</span>
+<h2>Let’s talk.</h2>
+<div class="about" data-b="contact.1">
+<img class="av" src="assets/avatar-hq.gif" alt="Chaitanya Sai">
+<div>
+<h3>Chaitanya Sai</h3>
+<p>I’m Chaitanya Sai, a Senior Product Designer at Equal AI, and previously Product Designer 2 at Jio Fynd. I’m a CS graduate turned designer with 4+ years of experience. I design in Figma, iterate in Claude and ship working prototypes with Claude Code, turning messy, human problems into calm, clear products.</p>
+<div class="links">
+<a class="p" data-ev="email" href="mailto:chaitanyasai1978@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>chaitanyasai1978@gmail.com</a>
+<a data-ev="portfolio" href="https://YOUR-PORTFOLIO-URL" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Portfolio</a>
+<a data-ev="linkedin" href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 11v5M8 8v.01M12 16v-5M12 13c0-1.5 1-2 2-2s2 .8 2 2.2V16"/></svg>LinkedIn</a>
+<a data-ev="github" href="https://github.com/YOUR-HANDLE" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.2c0-1 .1-1.5-.5-2.1 2.8-.3 5.5-1.4 5.5-6A4.7 4.7 0 0 0 18.700 6.500 4.300 4.300 0 0 0 18.600 3.300S17.500 3 15 4.700a12.200 12.200 0 0 0-6 0C6.500 3 5.400 3.300 5.400 3.300A4.300 4.300 0 0 0 5.300 6.500 4.700 4.700 0 0 0 4 9.700c0 4.600 2.700 5.700 5.500 6-.6.600-.6 1.200-.5 2.100V21"/></svg>GitHub</a>
+</div>
+</div>
+</div>
+</div></section>
+
+<footer><div class="wrap">
+<p>All names and data are fictional. Task 2 imagery (the companion character, sky, glass “Day” artwork, dove, “1” medal and the Quick tools photo thumbnails) comes from my moodboard and is used for this mockup only; credit belongs to the original artists. Tool and therapist photos: Unsplash. 3D faces and objects: Microsoft Fluent Emoji (MIT). Fonts: Figtree, PP Cirka.</p>
+<p style="margin-top:10px">This page counts anonymous visits (country and city, device, how far you read) to help me improve it. No cookies, no IP addresses stored. Add <code>?me</code> to the link to switch it off for your own browser.</p>
+</div></footer>
+<script>
+function fit(){document.querySelectorAll('.frame .vp').forEach(v=>{const f=v.querySelector('iframe');const k=v.clientWidth/1440;f.style.transform='scale('+k+')';v.style.height=(900*k)+'px'})}
+addEventListener('resize',fit);fit();
+const links=[...document.querySelectorAll('nav.top a')],secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+function spy(){let cur=null;secs.forEach((sec,i)=>{if(sec&&sec.getBoundingClientRect().top<=120)cur=i});if(innerHeight+scrollY>=document.body.scrollHeight-4)cur=secs.length-1;links.forEach((a,i)=>a.classList.toggle('on',i===cur));if(cur!==null){const w=document.querySelector('nav.top .wrap'),a=links[cur];w.scrollTo({left:a.offsetLeft-w.clientWidth/2+a.offsetWidth/2,behavior:'auto'})}}
+addEventListener('scroll',spy,{passive:true});addEventListener('scrollend',spy);setInterval(spy,300);spy();
+links.forEach((a,i)=>a.addEventListener('click',()=>{links.forEach(x=>x.classList.remove('on'));a.classList.add('on')}));
+</script>
+<script src="track.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "your-dost-assignment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "manifest": "python3 scripts/build-manifest.py",
+    "stats:build": "cd stats-app && pnpm install && pnpm build"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.1"
+  }
+}

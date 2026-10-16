@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+.vercel/
+.env*
+.stats-key
+.claude/
+Chey's DP HQ 1080.gif
+stats-app/node_modules/
+stats-app/dist/
