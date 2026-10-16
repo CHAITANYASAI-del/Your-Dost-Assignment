@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import jsVectorMap from 'jsvectormap'
-import { Fingerprint, LogOut, RefreshCw } from 'lucide-react'
+import { Fingerprint, RefreshCw } from 'lucide-react'
 import { Lock, enableTouchId, hasLocalPasskey, post, touchIdSupported } from '@/Lock'
 import { FunnelChart } from '@/components/charts/funnel-chart'
 import { StatusBar, StatusBarLegend, StatusBarPlot, StatusBarTooltip, type StatusBarDatum } from '@/components/charts/status-bar'
@@ -151,7 +151,6 @@ export default function App() {
   const [tidMsg, setTidMsg] = useState('')
   useEffect(() => { touchIdSupported().then((ok) => setCanTid(ok && !hasLocalPasskey())) }, [])
   async function addTouchId() { setTidMsg('') ; try { await enableTouchId(); setCanTid(false); setTidMsg('Touch ID is on for this device.') } catch (e) { setTidMsg((e as Error).message === 'Cancelled' ? '' : (e as Error).message) } }
-  async function lockNow() { await post('logout'); setData(null); setState('locked') }
 
   const load = useCallback(async () => {
     setSpin(true)
@@ -320,7 +319,6 @@ export default function App() {
           </SelectContent>
         </Select>
         {canTid && <button onClick={addTouchId} className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]"><Fingerprint className="size-4" aria-hidden="true" />Enable Touch ID</button>}
-        <button onClick={lockNow} aria-label="Lock" className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]"><LogOut className="size-4" aria-hidden="true" />Lock</button>
         <button onClick={load} className="inline-flex h-10 items-center gap-2 rounded-xl border bg-card px-3.5 text-sm font-medium shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition hover:bg-muted active:scale-[.97]">
           <RefreshCw className={`size-4 ${spin ? 'animate-spin' : ''}`} aria-hidden="true" />Refresh
         </button>
