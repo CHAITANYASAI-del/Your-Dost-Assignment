@@ -65,11 +65,8 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
 
   useEffect(() => {
     input.current?.focus()
-    ;(async () => {
-      if (!(await touchIdSupported())) return
-      const s = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
-      setTid(hasLocalPasskey() || s.passkeys > 0)
-    })()
+    // Always offer Touch ID where the browser has WebAuthn; if it is not set up yet the button explains how.
+    setTid(!!window.PublicKeyCredential)
   }, [])
 
   async function submit(e: FormEvent) {
@@ -82,7 +79,11 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
   }
   async function touch() {
     setBusy(true); setErr('')
-    try { await unlockWithTouchId(); onUnlocked() } catch (e) { setErr((e as Error).message === 'Cancelled' ? '' : (e as Error).message || 'Touch ID did not work.') }
+    try {
+      const s = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
+      if (!hasLocalPasskey() && !s.passkeys) throw new Error('Touch ID is not set up yet. Unlock with the password once, then tap “Enable Touch ID”.')
+      await unlockWithTouchId(); onUnlocked()
+    } catch (e) { setErr((e as Error).message === 'Cancelled' ? '' : (e as Error).message || 'Touch ID did not work.') }
     setBusy(false)
   }
 

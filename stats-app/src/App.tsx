@@ -318,6 +318,10 @@ export default function App() {
       </div>
     </header>
 
+    {canTid && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand/30 bg-brand-soft/50 px-4 py-3">
+      <div className="flex items-center gap-3 text-sm"><Fingerprint className="size-5 text-brand" aria-hidden="true" /><span><b className="font-semibold">Unlock with Touch ID next time.</b> <span className="text-muted-foreground">One tap to turn it on for this device.</span></span></div>
+      <button onClick={addTouchId} className="h-9 rounded-xl bg-brand px-4 text-sm font-semibold text-white transition active:scale-[.97]">Enable Touch ID</button>
+    </div>}
     {tidMsg && <p role="status" className="mb-4 rounded-xl bg-brand-soft px-4 py-2.5 text-sm text-brand">{tidMsg}</p>}
     <Panel title="Metrics" right={cmp}>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
