@@ -5,7 +5,7 @@ import { isAuthed, makeSession, sessionCookie, makeChallenge, checkChallenge, pa
 // Login for the private /track dashboard.
 //  - password: checked here on the server (STATS_PASSWORD env var), never in the page.
 //  - Touch ID / passkey: after a password login a device can register a platform passkey; the server verifies
-//    the WebAuthn signature against the stored public key. Either path sets a 7-day HttpOnly session cookie.
+//    the WebAuthn signature against the stored public key. Either path sets a short-lived HttpOnly session cookie (12h max, and the dashboard locks itself on every page load).
 //  - failed attempts are counted per (keyed-hash of) visitor and locked after 8 in 10 minutes.
 const WINDOW = 10 * 60 * 1000, MAX_FAILS = 8;
 
@@ -19,7 +19,7 @@ async function creds() {
   const r = await list({ prefix: 'auth/', limit: 100 });
   return r.blobs.map((b) => { const [id, spki] = b.pathname.slice(5).replace(/\.json$/, '').split('~'); return { id, spki }; });
 }
-const ok = (res, extra = {}) => { res.setHeader('Set-Cookie', sessionCookie(makeSession(), 7 * 86400)); return res.status(200).json({ ok: true, ...extra }); };
+const ok = (res, extra = {}) => { res.setHeader('Set-Cookie', sessionCookie(makeSession(0.5), null)); return res.status(200).json({ ok: true, ...extra }); };
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');

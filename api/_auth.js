@@ -6,8 +6,9 @@ export const sha256 = (b) => crypto.createHash('sha256').update(b).digest();
 export const sign = (s) => crypto.createHmac('sha256', secret()).update(s).digest('base64url');
 const eq = (a, b) => a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
-export const makeSession = (days = 7) => { const exp = Date.now() + days * 864e5; return `${exp}.${sign('s' + exp)}`; };
-export const sessionCookie = (val, maxAge) => `yd_stats=${val}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+export const makeSession = (days = 0.5) => { const exp = Date.now() + days * 864e5; return `${exp}.${sign('s' + exp)}`; };
+// no Max-Age = a browser-session cookie, gone when the browser closes
+export const sessionCookie = (val, maxAge) => `yd_stats=${val}; Path=/; HttpOnly; Secure; SameSite=Strict${maxAge != null ? `; Max-Age=${maxAge}` : ''}`;
 export function isAuthed(req) {
   const m = (req.headers.cookie || '').match(/(?:^|;\s*)yd_stats=([^;]+)/);
   if (!m || !secret()) return false;

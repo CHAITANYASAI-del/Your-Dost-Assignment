@@ -162,7 +162,16 @@ export default function App() {
       setData(await r.json()); setState('ok')
     } catch { setState('error') } finally { setTimeout(() => setSpin(false), 400) }
   }, [])
-  useEffect(() => { load(); const t = setInterval(() => { if (document.visibilityState === 'visible') load() }, 60000); return () => clearInterval(t) }, [load])
+  // Every page load (refresh, new visit, back button) starts locked: end any old session first.
+  const stateRef = useRef(state); stateRef.current = state
+  useEffect(() => {
+    const relock = () => { post('logout').finally(() => { setData(null); setState('locked') }) }
+    relock()
+    const onShow = (e: PageTransitionEvent) => { if (e.persisted) relock() }
+    window.addEventListener('pageshow', onShow)
+    const t = setInterval(() => { if (document.visibilityState === 'visible' && stateRef.current === 'ok') load() }, 60000)
+    return () => { clearInterval(t); window.removeEventListener('pageshow', onShow) }
+  }, [load])
   useEffect(() => { fetch('/track-manifest.json', { cache: 'no-store' }).then((r) => r.json()).then(setMan).catch(() => {}) }, [])
 
   const view = useMemo(() => {
