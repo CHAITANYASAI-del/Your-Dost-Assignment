@@ -60,6 +60,7 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
   const [hint, setHint] = useState(false)
+  const [info, setInfo] = useState('')
   const [tid, setTid] = useState(false)
   const input = useRef<HTMLInputElement>(null)
 
@@ -78,13 +79,18 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
     if (r.ok) onUnlocked(); else { setErr(r.error || 'That is not it.'); setPw(''); input.current?.focus() }
   }
   async function touch() {
-    setBusy(true); setErr('')
+    setBusy(true); setErr(''); setInfo('')
     try {
-      const s = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
-      if (!hasLocalPasskey() && !s.passkeys) throw new Error('Touch ID is not set up yet. Unlock with the password once, then tap “Enable Touch ID”.')
-      await unlockWithTouchId(); onUnlocked()
+      const st = await fetch('/api/auth').then((r) => r.json()).catch(() => ({ passkeys: 0 }))
+      if (hasLocalPasskey() || st.passkeys > 0) { await unlockWithTouchId(); onUnlocked(); return }
+      // First time on this device: the password proves it is you, and the same tap registers Touch ID.
+      if (!pw.trim()) { setInfo('Type your password once, then tap Touch ID again. This Mac will remember it after that.'); input.current?.focus(); return }
+      const r = await post('login', { password: pw })
+      if (!r.ok) { setErr(r.error || 'That is not it.'); setPw(''); input.current?.focus(); return }
+      try { await enableTouchId() } catch { /* unlocked anyway; the dashboard offers Enable Touch ID */ }
+      onUnlocked()
     } catch (e) { setErr((e as Error).message === 'Cancelled' ? '' : (e as Error).message || 'Touch ID did not work.') }
-    setBusy(false)
+    finally { setBusy(false) }
   }
 
   return <div className="grid min-h-screen place-items-center px-4">
@@ -96,6 +102,7 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
       <input ref={input} type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" autoComplete="current-password" aria-label="Password"
         className={`mt-6 h-12 w-full rounded-xl border bg-background px-4 text-base outline-none transition focus:ring-2 focus:ring-brand/40 ${err ? 'border-red-400' : ''}`} />
       {err && <p role="alert" className="mt-2 text-sm text-red-600">{err}</p>}
+      {info && <p role="status" className="mt-2 text-sm text-brand">{info}</p>}
 
       <button type="submit" disabled={busy || !pw.trim()} className="mt-3 h-12 w-full rounded-xl bg-brand text-sm font-semibold text-white transition active:scale-[.98] disabled:opacity-40">{busy ? 'Checking…' : 'Unlock'}</button>
 
