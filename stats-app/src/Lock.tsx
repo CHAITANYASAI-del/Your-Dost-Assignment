@@ -120,10 +120,10 @@ export function Lock({ onUnlocked }: { onUnlocked: () => void }) {
   const date = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })
   const label = mode === 'touch' ? 'Touch the sensor…' : mode === 'checking' ? 'Checking…' : mode === 'success' ? 'Unlocked' : canTid ? 'Touch ID or Enter Password' : 'Enter Password'
 
-  return <div className={`yd-lock fixed inset-0 overflow-hidden text-white ${mode === 'success' ? 'yd-out' : ''}`} style={{ backgroundImage: "url('/assets/sky.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-    <div className="yd-veil absolute inset-0 bg-[#0b2a55]/25 backdrop-blur-xl" />
+  return <div className={`yd-lock fixed inset-0 overflow-hidden text-white ${mode === 'success' ? 'yd-out' : ''}`} style={{ backgroundColor: '#1b1b1d', backgroundImage: "url('/assets/lock-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="yd-veil absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 35%, rgba(20,6,0,.42) 100%)' }} />
     <div className="relative z-10 flex h-full flex-col items-center px-6">
-      <div className="mt-[9vh] text-center drop-shadow-[0_2px_20px_rgba(11,42,85,.35)]">
+      <div className="mt-[9vh] text-center drop-shadow-[0_2px_24px_rgba(0,0,0,.45)]">
         <div className="text-lg font-medium text-white/85">{date}</div>
         <div className="text-[84px] font-semibold leading-none tracking-tight sm:text-[104px]">{time}</div>
       </div>
